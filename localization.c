@@ -23,7 +23,7 @@ void parsePoints(int *data, POINT **points);
 
 FPOINT *determine_position(POINT **points);
 int find_axial_points(POINT **points, POINT **axial_points);
-void find_axis_direction(POINT **axial_points, POINT *p3);
+int find_axis_direction(POINT **axial_points, POINT *p3);
 float determine_angle(POINT **axial_points);
 FPOINT *rotate_point(POINT *p, float theta);
 FPOINT *mid_point(FPOINT *p1, FPOINT *p2);
@@ -39,21 +39,21 @@ float magnitude(int *v);
 
 int main()
 {
-    /* FILE *file = fopen("A.csv", "r"); */
-    FILE *file = fopen("B.csv", "r");
-    /* FILE *file = fopen("C.csv", "r"); */
+  /* FILE *file = fopen("A.csv", "r"); */
+  /* FILE *file = fopen("B.csv", "r"); */
+  FILE *file = fopen("C.csv", "r");
 
-    int data[12];
-    char line[128];
-    POINT *points[4];
+  int data[12];
+  char line[128];
+  POINT *points[4];
 
-    while (fgets(line, 128, file)) {
-      getData(data, line);
-      parsePoints(data, points);
+  while (fgets(line, 128, file)) {
+    getData(data, line);
+    parsePoints(data, points);
 
-      FPOINT *mp = determine_position(points);
-      printf("x:%f, y:%f\n", 1024-mp->x, 768-mp->y);
-    }
+    FPOINT *mp = determine_position(points);
+    printf("x:%f, y:%f\n", mp->x, mp->y);
+  }
 }
 
 /*
@@ -97,11 +97,15 @@ FPOINT *determine_position(POINT **points) {
   if (!find_axial_points(points, axial_points)) {
     return create_fpoint(0,0);
   }
-  find_axis_direction(axial_points, find_third_point(points, axial_points));
+  if (!find_axis_direction(axial_points,
+                           find_third_point(points, axial_points))) {
+    return create_fpoint(0,0);
+  }
   theta = determine_angle(axial_points);
 
-  return mid_point(rotate_point(axial_points[0], theta),
-                   rotate_point(axial_points[1], theta));
+  FPOINT *mp = mid_point(rotate_point(axial_points[0], theta),
+                         rotate_point(axial_points[1], theta));
+  return create_fpoint(RINK_PIXEL_WIDTH - mp->x, RINK_PIXEL_HEIGHT - mp->y);
 }
 
 int find_axial_points(POINT **points, POINT **axial_points) {
@@ -139,7 +143,7 @@ int find_axial_points(POINT **points, POINT **axial_points) {
       axial_points[1] = p4;
     }
     return 1;
-  } else if (n == 2) {
+  } else if (n == 3) {
     float d1 = distance(p1, p2);
     float d2 = distance(p1, p3);
     float d3 = distance(p2, p3);
@@ -161,7 +165,7 @@ int find_axial_points(POINT **points, POINT **axial_points) {
   }
 }
 
-void find_axis_direction(POINT **axial_points, POINT *p3) {
+int find_axis_direction(POINT **axial_points, POINT *p3) {
   POINT *p1 = axial_points[0];
   POINT *p2 = axial_points[1];
   float d1 = distance(p1, p2);
@@ -178,11 +182,14 @@ void find_axis_direction(POINT **axial_points, POINT *p3) {
     POINT *temp = p1;
     axial_points[0] = p2;
     axial_points[1] = temp;
+    return 1;
   } else if ((ratio > 0.64 && ratio <= 0.74) ||
              (ratio > 0.85 && ratio <= 0.95)) {
     // already in correct order.
+    return 1;
   } else {
     printf("triangle analysis failed to classify\n");
+    return 0;
   }
 }
 
