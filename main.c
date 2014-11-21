@@ -7,6 +7,7 @@
 #include "timer.h"
 #include "localization.h"
 #include "comm.h"
+#include "debug.h"
 
 volatile int new_camera_data_flag = 0;
 unsigned int blobs[12];
@@ -30,7 +31,7 @@ int main(void) {
 
   m_usb_init();
   while(!m_usb_isconnected()); // wait for a connection
-  m_usb_tx_string("USB connected.\n");
+  send_str("USB connected.\n");
 
   while(1) {
     if (new_camera_data_flag) {
@@ -59,16 +60,4 @@ int main(void) {
 ISR(TIMER1_COMPA_vect)
 {
   new_camera_data_flag = 1;
-}
-
-void send_str(char *str){
-  int i;
-  for (i=0; i< strlen(buf); i++) {
-    m_usb_tx_char(*(buf+i));
-  }
-}
-
-void send_float(char *label, float value){
-  sprintf(buf, "%s: %.3f\n", label, value);
-  send_str(buf);
 }

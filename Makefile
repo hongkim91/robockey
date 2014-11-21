@@ -13,7 +13,7 @@
 # tag to the parents line (e.g. "PARENTS = "m_bus.o")
 # --------------------------------------------------------
 MAIN       = main.o
-CHILDREN   = timer.o localization.o comm.o
+CHILDREN   = timer.o localization.o comm.o debug.o
 PARENTS    = m_bus.o m_usb.o m_rf.o m_wii.o
 
 # --------------------------------------------------------
