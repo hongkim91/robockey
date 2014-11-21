@@ -6,6 +6,7 @@
 #include "m_usb.h"
 #include "timer.h"
 #include "localization.h"
+#include "comm.h"
 
 volatile int new_camera_data_flag = 0;
 unsigned int blobs[12];
@@ -15,20 +16,23 @@ void send_str(char *str);
 void send_float(char *label, float value);
 
 int main(void) {
+  // set system clock to 16MHz.
   m_clockdivide(0);
 
+  // enable global interrupts.
   sei();
+
+  m_wii_open();
+
+  init_timer1();
+
+  comm_init();
 
   m_usb_init();
   while(!m_usb_isconnected()); // wait for a connection
   m_usb_tx_string("USB connected.\n");
 
-  init_timer1();
-
-  m_wii_open();
-
   while(1) {
-
     if (new_camera_data_flag) {
       m_red(TOGGLE);
 
