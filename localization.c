@@ -2,26 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "localization.h"
 
 #define RINK_PIXEL_WIDTH 1024
 #define RINK_PIXEL_HEIGHT 768
 #define CENTER_X (RINK_PIXEL_WIDTH/2)
 #define CENTER_Y (RINK_PIXEL_HEIGHT/2)
 
-typedef struct point {
-  int x;
-  int y;
-} POINT;
+void getData(unsigned int *data, char *line);
+void parsePoints(unsigned int *data, POINT **points);
 
-typedef struct fpoint {
-  float x;
-  float y;
-} FPOINT;
-
-void getData(int *data, char *line);
-void parsePoints(int *data, POINT **points);
-
-FPOINT *determine_position(POINT **points);
+FPOINT *determine_position(unsigned int *data);
 int find_axial_points(POINT **points, POINT **axial_points);
 int find_axis_direction(POINT **axial_points, POINT *p3);
 float determine_angle(POINT **axial_points);
@@ -37,31 +28,35 @@ float max(float *arr, int length);
 int dot_product(int *v1, int* v2);
 float magnitude(int *v);
 
-int main()
-{
-  /* FILE *file = fopen("A.csv", "r"); */
-  /* FILE *file = fopen("B.csv", "r"); */
-  FILE *file = fopen("C.csv", "r");
+int initialized = 0;
+POINT *axial_points[2];
+POINT *points[4];
 
-  int data[12];
-  char line[128];
-  POINT *points[4];
+/* int main() */
+/* { */
+/*   /\* FILE *file = fopen("A.csv", "r"); *\/ */
+/*   /\* FILE *file = fopen("B.csv", "r"); *\/ */
+/*   FILE *file = fopen("C.csv", "r"); */
 
-  while (fgets(line, 128, file)) {
-    getData(data, line);
-    parsePoints(data, points);
+/*   unsigned int data[12]; */
+/*   char line[128]; */
 
-    FPOINT *mp = determine_position(points);
-    printf("x:%f, y:%f\n", mp->x, mp->y);
-  }
-}
+/*   while (fgets(line, 128, file)) { */
+/*     getData(data, line); */
+
+/*     FPOINT *mp = determine_position(data); */
+/*     printf("x:%f, y:%f\n", mp->x, mp->y); */
+/*     free(mp); */
+/*   } */
+/* } */
 
 /*
  * DATA PARSING
  */
-void getData(int *data, char *line) {
+void getData(unsigned int *data, char *line) {
   char* tok;
-  for (int i = 0; i < 12; i++) {
+  int i;
+  for (i = 0; i < 12; i++) {
     if (i == 0) {
       tok = strtok(line, ",");
     } else {
@@ -71,14 +66,24 @@ void getData(int *data, char *line) {
   }
 }
 
-void parsePoints(int *data, POINT **points) {
+void parsePoints(unsigned int *data, POINT **points) {
+  int i;
   int p_idx = 0;
-  for (int i=0; i<12; i=i+3) {
+  for (i=0; i<12; i=i+3) {
     if (data[i] != 1023) {
-      points[p_idx++] = create_point(data[i], data[i+1]);
+      if (points[p_idx] == NULL) {
+        points[p_idx] = create_point(data[i], data[i+1]);
+      } else {
+        points[p_idx]->x = data[i];
+        points[p_idx]->y = data[i+1];
+      }
+      p_idx++;
     }
   }
   for (; p_idx < 4; p_idx++) {
+    if (points[p_idx] != NULL) {
+      free(points[p_idx]);
+    }
     points[p_idx] = NULL;
   }
 }
@@ -91,9 +96,21 @@ void parsePoints(int *data, POINT **points) {
  * 4. Rotate the axis by theta.
  * 5. Calculate mid point of the axis points.
  */
-FPOINT *determine_position(POINT **points) {
-  POINT *axial_points[2];
+FPOINT *determine_position(unsigned int *data) {
   float theta;
+
+  if (!initialized) {
+    int i;
+    for (i=0; i<2; i++) {
+      axial_points[i] = NULL;
+    }
+    for (i=0; i<4; i++) {
+      points[i] = NULL;
+    }
+    initialized = 1;
+  }
+  parsePoints(data, points);
+
   if (!find_axial_points(points, axial_points)) {
     return create_fpoint(0,0);
   }
@@ -103,9 +120,17 @@ FPOINT *determine_position(POINT **points) {
   }
   theta = determine_angle(axial_points);
 
-  FPOINT *mp = mid_point(rotate_point(axial_points[0], theta),
-                         rotate_point(axial_points[1], theta));
-  return create_fpoint(RINK_PIXEL_WIDTH - mp->x, RINK_PIXEL_HEIGHT - mp->y);
+  FPOINT *rp1 = rotate_point(axial_points[0], theta);
+  FPOINT *rp2 = rotate_point(axial_points[1], theta);
+  FPOINT *mp = mid_point(rp1, rp2);
+
+  // The camera's coordinate system has its origin in the top-right.
+  FPOINT *pos = create_fpoint(RINK_PIXEL_WIDTH - mp->x, mp->y);
+
+  free(rp1);
+  free(rp2);
+  free(mp);
+  return pos;
 }
 
 int find_axial_points(POINT **points, POINT **axial_points) {
@@ -242,7 +267,8 @@ FPOINT *create_fpoint(float x, float y) {
 }
 
 POINT *find_third_point(POINT **points, POINT **axial_points) {
-  for (int i=0; i<4; i++) {
+  int i;
+  for (i=0; i<4; i++) {
     if (points[i] != axial_points[0] && points[i] != axial_points[1]) {
       return points[i];
     }
@@ -252,7 +278,8 @@ POINT *find_third_point(POINT **points, POINT **axial_points) {
 
 int num_points(POINT **points) {
   int n = 0;
-  for (int i=0; i<4; i++) {
+  int i;
+  for (i=0; i<4; i++) {
     if (points[i] != NULL) {
       n++;
     }
@@ -266,7 +293,8 @@ float distance(POINT *p1, POINT *p2) {
 
 float max(float *arr, int length) {
   float max = 0;
-  for (int i=0; i<length; i++) {
+  int i;
+  for (i=0; i<length; i++) {
     if (arr[i] > max) {
       max = arr[i];
     }
