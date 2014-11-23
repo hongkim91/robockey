@@ -1,6 +1,8 @@
 #ifndef localization__
 #define localization__
 
+#include <stdlib.h>
+
 typedef struct point {
   int x;
   int y;

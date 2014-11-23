@@ -2,6 +2,7 @@
 #include "m_general.h"
 #include "m_bus.h"
 #include "m_rf.h"
+#include "debug.h"
 
 #define CHANNEL 1
 #define RXADDRESS 84
@@ -9,15 +10,14 @@
 
 char buffer[PACKET_LENGTH] = {0,0,0,0,0,0,0,0,0,0};
 
-/* volatile bool new_packet_flag = false; */
-
 void comm_init() {
-  m_bus_init(); // enable mBUS
-  m_rf_open(CHANNEL, RXADDRESS, PACKET_LENGTH); // configure mRF
+  m_bus_init();
+  if (!m_rf_open(CHANNEL, RXADDRESS, PACKET_LENGTH)) {
+    m_red(ON);
+  }
 }
 
-ISR(INT2_vect){
+void comm_handler() {
   m_rf_read(buffer,PACKET_LENGTH);
-  /* new_packet_flag = true; */
-  m_green(TOGGLE);
+  send_hex("buf[0]", buffer[0]);
 }
