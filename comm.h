@@ -3,6 +3,6 @@
 
 void comm_init(int rx_addr);
 void comm_handler();
-void rf_send();
+void send_camera_data(unsigned int* blobs);
 
 #endif

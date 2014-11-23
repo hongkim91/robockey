@@ -4,7 +4,7 @@
 #include "localization.h"
 
 #define SYSTEM_CLOCK 16*pow(10,6)
-#define POLLING_FREQ 10
+#define POLLING_FREQ 2
 
 // this timer will pull values from the imu when it overflows
 void init_timer1()

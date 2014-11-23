@@ -33,14 +33,14 @@ int main(void) {
 
   while(1) {
     if (new_camera_data_flag) {
-      /* m_red(TOGGLE); */
-      /* camera_handler(blobs); */
+      m_red(TOGGLE);
+      camera_handler(blobs);
+      send_camera_data(blobs);
       new_camera_data_flag = 0;
     }
     if (new_packet_flag) {
       m_green(TOGGLE);
-      comm_handler();
-      rf_send();
+      /* comm_handler(); */
       new_packet_flag = 0;
     }
   }

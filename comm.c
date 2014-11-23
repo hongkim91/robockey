@@ -22,7 +22,13 @@ void comm_handler() {
   send_hex("buf[0]", buffer[0]);
 }
 
-void rf_send() {
+void send_camera_data(unsigned int* blobs) {
+  int i, j=0;
+  for (i=0; i<12; i=i+3) {
+    buffer[j] = blobs[i];
+    buffer[j+1] = blobs[i+1];
+    j = j+2;
+  }
   m_rf_send(TXADDRESS, buffer, PACKET_LENGTH);
 }
 
