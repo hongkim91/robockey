@@ -60,6 +60,16 @@ main.hex: main.elf
 	rm -f main.hex
 	avr-objcopy -j .text -j .data -O ihex main.elf main.hex
 
+receiver.elf: receiver.o $(CHILDREN) $(PARENTS)
+	$(COMPILE) -o receiver.elf receiver.o $(CHILDREN) $(PARENTS) $(LIBRARIES) -lm
+
+receiver.hex: receiver.elf
+	rm -f receiver.hex
+	avr-objcopy -j .text -j .data -O ihex receiver.elf receiver.hex
+recv: receiver.hex
+	dfu-programmer atmega32u4 erase
+	dfu-programmer atmega32u4 flash receiver.hex
+
 # Targets for code debugging and analysis:
 disasm:	main.elf
 	avr-objdump -d main.elf

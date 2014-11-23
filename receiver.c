@@ -6,7 +6,7 @@
 #include "camera.h"
 #include "debug.h"
 
-#define RXADDRESS 84
+#define RXADDRESS 100
 
 volatile int new_camera_data_flag = 0;
 volatile int new_packet_flag = 0;
@@ -22,34 +22,17 @@ int main(void) {
   // usb data channel init.
   debug_init();
 
-  // camera polling timer.
-  init_timer1();
-
-  // mWii init.
-  camera_init();
-
   // rf communicaiton init.
   comm_init(RXADDRESS);
 
   while(1) {
-    if (new_camera_data_flag) {
-      /* m_red(TOGGLE); */
-      /* camera_handler(blobs); */
-      new_camera_data_flag = 0;
-    }
     if (new_packet_flag) {
       m_green(TOGGLE);
       comm_handler();
-      rf_send();
       new_packet_flag = 0;
     }
   }
   return 0;
-}
-
-// camera interrupt.
-ISR(TIMER1_COMPA_vect) {
-  new_camera_data_flag = 1;
 }
 
 // rf data interrupt.
