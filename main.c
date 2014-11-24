@@ -12,6 +12,9 @@ volatile int new_camera_data_flag = 0;
 volatile int new_packet_flag = 0;
 unsigned int blobs[12];
 
+float x;
+float y;
+
 int main(void) {
   // set system clock to 16MHz.
   m_clockdivide(0);
@@ -34,8 +37,8 @@ int main(void) {
   while(1) {
     if (new_camera_data_flag) {
       m_red(TOGGLE);
-      camera_handler(blobs);
-      send_camera_data(blobs);
+      camera_handler(blobs, &x, &y);
+      send_camera_data(blobs, x, y);
       new_camera_data_flag = 0;
     }
     if (new_packet_flag) {

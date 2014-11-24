@@ -10,18 +10,20 @@ void camera_init() {
   m_wii_open();
 }
 
-void camera_handler(unsigned int *blobs) {
+void camera_handler(unsigned int *blobs, float *x, float *y) {
   if (m_wii_read(blobs)) {
-    sprintf(buf, "[%d,%d]/[%d,%d]/[%d,%d]/[%d,%d]\n",
-            blobs[0], blobs[1], blobs[3], blobs[4],
-            blobs[6], blobs[7], blobs[9], blobs[10]);
-    send_buf(buf);
+    /* sprintf(buf, "[%d,%d]/[%d,%d]/[%d,%d]/[%d,%d]\n", */
+    /*         blobs[0], blobs[1], blobs[3], blobs[4], */
+    /*         blobs[6], blobs[7], blobs[9], blobs[10]); */
+    /* send_buf(buf); */
   } else {
-    m_usb_tx_string("failed reading from mWii");
+    /* m_usb_tx_string("failed reading from mWii"); */
   }
 
   FPOINT *p = determine_position(blobs);
   send_float("x", p->x);
   send_float("y", p->y);
+  *x = p->x;
+  *y = p->y;
   free(p);
 }

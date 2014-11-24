@@ -8,11 +8,9 @@
 
 #define RXADDRESS 100
 
-volatile int new_camera_data_flag = 0;
-volatile int new_packet_flag = 0;
-unsigned int blobs[12];
-
 int main(void) {
+  char rx_buffer; //computer interactions
+
   // set system clock to 16MHz.
   m_clockdivide(0);
 
@@ -26,10 +24,12 @@ int main(void) {
   comm_init(RXADDRESS);
 
   while(1) {
-    if (new_packet_flag) {
-      m_green(TOGGLE);
-      comm_handler();
-      new_packet_flag = 0;
+    while(!m_usb_rx_available());  	//wait for an indication from the computer
+    rx_buffer = m_usb_rx_char();  	//grab the computer packet
+    m_usb_rx_flush();  		//clear buffer
+
+    if(rx_buffer == 1) {
+      live_plot_data();
     }
   }
   return 0;
@@ -37,5 +37,6 @@ int main(void) {
 
 // rf data interrupt.
 ISR(INT2_vect){
-  new_packet_flag = 1;
+  m_green(TOGGLE);
+  receiver_handler();
 }

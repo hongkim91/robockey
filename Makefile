@@ -70,6 +70,16 @@ recv: receiver.hex
 	dfu-programmer atmega32u4 erase
 	dfu-programmer atmega32u4 flash receiver.hex
 
+live_plot.elf: live_plot.o $(CHILDREN) $(PARENTS)
+	$(COMPILE) -o live_plot.elf live_plot.o $(CHILDREN) $(PARENTS) $(LIBRARIES) -lm
+
+live_plot.hex: live_plot.elf
+	rm -f live_plot.hex
+	avr-objcopy -j .text -j .data -O ihex live_plot.elf live_plot.hex
+live_plot: live_plot.hex
+	dfu-programmer atmega32u4 erase
+	dfu-programmer atmega32u4 flash live_plot.hex
+
 # Targets for code debugging and analysis:
 disasm:	main.elf
 	avr-objdump -d main.elf
