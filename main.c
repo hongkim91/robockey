@@ -5,6 +5,7 @@
 #include "comm.h"
 #include "camera.h"
 #include "debug.h"
+#include "motor.h"
 
 #define RXADDRESS 84
 
@@ -25,11 +26,8 @@ int main(void) {
   // usb data channel init.
   debug_init();
 
-  //MOTOR DIRECTION PIN
-  set(DDRB,4);
-  set(DDRC,6);
-  set(PORTB, 4);
-  set(PORTC, 6);
+  // init motor pins.
+  motor_init();
 
   // motor enable pin pwm timer.
   // FIXME: Bringing down the prescalar of timer1 causes problems with mWii.

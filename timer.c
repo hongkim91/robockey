@@ -4,7 +4,7 @@
 #include "localization.h"
 
 #define SYSTEM_CLOCK 16*pow(10,6)
-#define POLLING_FREQ 2
+#define POLLING_FREQ 1
 
 // motor enable pin pwm timer.
 void init_timer1()
