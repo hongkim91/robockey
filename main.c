@@ -30,8 +30,7 @@ int main(void) {
   motor_init();
 
   // motor enable pin pwm timer.
-  // FIXME: Bringing down the prescalar of timer1 causes problems with mWii.
-  /* init_timer1(); */
+  init_timer1();
 
   // camera polling timer.
   init_timer3();

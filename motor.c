@@ -4,8 +4,8 @@ void motor_init() {
   // pwm enable pins.
   set(DDRB,5);
   set(DDRB,6);
-  set(PORTB, 5);
-  set(PORTB, 6);
+  /* set(PORTB, 5); */
+  /* set(PORTB, 6); */
 
   // direction pins.
   set(DDRB,4);

@@ -15,31 +15,24 @@ void init_timer1()
   clear(TCCR1B,CS11);
   clear(TCCR1B,CS10);
 
-  // set timer mode: (mode 15) UP to OCR1A, PWM mode
+  // set timer mode: (mode 5) UP to 0x00FF (8-bit), PWM mode
   // pwm freq = timer freq / 256 = 244Hz
   clear(TCCR1B,WGM13);
   set(TCCR1B,WGM12);
   clear(TCCR1A,WGM11);
-  set(TCCR1A, WGM10);
+  set(TCCR1A,WGM10);
 
   // set OCR1A and OCR1B ceilings
   OCR1A = 255;
   OCR1B = 255;
 
-  //  B5: OCR0A OUTPUT COMPARE: clear at OCR1A, set at 0xFF: Duty cycle - OCR1A/255
+  // OCR1A output compare: B5 clear at OCR1A, set at rollover
   set(TCCR1A, COM1A1);
   clear(TCCR1A, COM1A0);
-  // output enable B5
-  set(DDRB,5);
 
-  //  B6: OCR0A OUTPUT COMPARE: clear at OCR1A, set at 0xFF: Duty cycle - OCR1A/255
+  // OCR1B output compare: B6 clear at OCR1B, set at rollover
   set(TCCR1A, COM1B1);
   clear(TCCR1A, COM1B0);
-  // output enable B6
-  set(DDRB,6);
-
-  // enable interrput when timer is OCR1A
-  set(TIMSK1,OCIE1A);
 }
 
 // camera polling timer.
