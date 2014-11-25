@@ -6,7 +6,7 @@ char buf[100];
 
 void debug_init() {
   m_usb_init();
-  while(!m_usb_isconnected()); // wait for a connection
+  /* while(!m_usb_isconnected()); // wait for a connection */
   m_usb_tx_string("USB is connected.\n");
 }
 

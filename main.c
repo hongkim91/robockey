@@ -25,8 +25,18 @@ int main(void) {
   // usb data channel init.
   debug_init();
 
+  //MOTOR DIRECTION PIN
+  set(DDRB,4);
+  set(DDRC,6);
+  set(PORTB, 4);
+  set(PORTC, 6);
+
+  // motor enable pin pwm timer.
+  // FIXME: Bringing down the prescalar of timer1 causes problems with mWii.
+  /* init_timer1(); */
+
   // camera polling timer.
-  init_timer1();
+  init_timer3();
 
   // mWii init.
   camera_init();
@@ -38,12 +48,12 @@ int main(void) {
     if (new_camera_data_flag) {
       m_red(TOGGLE);
       camera_handler(blobs, &x, &y);
-      send_camera_data(blobs, x, y);
+      /* send_camera_data(blobs, x, y); */
       new_camera_data_flag = 0;
     }
     if (new_packet_flag) {
       m_green(TOGGLE);
-      /* comm_handler(); */
+      comm_handler();
       new_packet_flag = 0;
     }
   }
@@ -51,7 +61,7 @@ int main(void) {
 }
 
 // camera interrupt.
-ISR(TIMER1_COMPA_vect) {
+ISR(TIMER3_COMPA_vect) {
   new_camera_data_flag = 1;
 }
 
@@ -59,3 +69,4 @@ ISR(TIMER1_COMPA_vect) {
 ISR(INT2_vect){
   new_packet_flag = 1;
 }
+
