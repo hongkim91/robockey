@@ -12,7 +12,7 @@ void camera_init() {
   }
 }
 
-void camera_handler(unsigned int *blobs, float *x, float *y) {
+void camera_handler(unsigned int *blobs, float *x, float *y, float *theta) {
   if (m_wii_read(blobs)) {
     sprintf(buf, "[%d,%d]/[%d,%d]/[%d,%d]/[%d,%d]\n",
             blobs[0], blobs[1], blobs[3], blobs[4],
@@ -25,7 +25,9 @@ void camera_handler(unsigned int *blobs, float *x, float *y) {
   FPOINT *p = determine_position(blobs);
   send_float("x", p->x);
   send_float("y", p->y);
+  send_float("theta", p->theta * 57.3);
   *x = p->x;
   *y = p->y;
+  *theta = p->theta;
   free(p);
 }

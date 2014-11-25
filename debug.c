@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "m_usb.h"
+#include "localization.h"
 
 char buf[100];
 
@@ -24,5 +25,10 @@ void send_float(char *label, float value) {
 
 void send_hex(char *label, char value) {
   sprintf(buf, "%s: %X\n", label, (unsigned)(unsigned char) value);
+  send_buf(buf);
+}
+
+void send_point(int x, int y) {
+  sprintf(buf, "x: %d, y: %d\n", x, y);
   send_buf(buf);
 }

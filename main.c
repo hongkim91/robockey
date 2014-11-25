@@ -6,6 +6,7 @@
 #include "camera.h"
 #include "debug.h"
 #include "motor.h"
+#include "localization.h"
 
 #define RXADDRESS 84
 
@@ -15,6 +16,9 @@ unsigned int blobs[12];
 
 float x;
 float y;
+float robot_theta;
+float goal_theta;
+POINT *robot_goal[2];
 
 int main(void) {
   // set system clock to 16MHz.
@@ -30,7 +34,7 @@ int main(void) {
   motor_init();
 
   // motor enable pin pwm timer.
-  init_timer1();
+  /* init_timer1(); */
 
   // camera polling timer.
   init_timer3();
@@ -41,10 +45,16 @@ int main(void) {
   // rf communicaiton init.
   comm_init(RXADDRESS);
 
+  robot_goal[1] = create_point(820, 350);
+
   while(1) {
     if (new_camera_data_flag) {
       m_red(TOGGLE);
-      camera_handler(blobs, &x, &y);
+      camera_handler(blobs, &x, &y, &robot_theta);
+      robot_goal[0] = create_point(x,y);
+      goal_theta = determine_angle(robot_goal);
+      send_float("goal_theta", goal_theta * 57.3);
+      free(robot_goal[0]);
       /* send_camera_data(blobs, x, y); */
       new_camera_data_flag = 0;
     }

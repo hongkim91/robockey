@@ -25,8 +25,8 @@ POINT *find_third_point(POINT **points, POINT **axial_points);
 int num_points(POINT **points);
 float distance(POINT *p1, POINT *p2);
 float max(float *arr, int length);
-int dot_product(int *v1, int* v2);
-float magnitude(int *v);
+long dot_product(long *v1, long* v2);
+float magnitude(long *v);
 
 int initialized = 0;
 POINT *axial_points[2];
@@ -126,6 +126,7 @@ FPOINT *determine_position(unsigned int *data) {
 
   // The camera's coordinate system has its origin in the top-right.
   FPOINT *pos = create_fpoint(RINK_PIXEL_WIDTH - mp->x, mp->y);
+  pos->theta = theta;
 
   free(rp1);
   free(rp2);
@@ -222,8 +223,8 @@ float determine_angle(POINT **axial_points) {
   POINT *a = axial_points[0];
   POINT *b = axial_points[1];
 
-  int v1[] = {a->x - b->x, a->y - b->y};
-  int v2[] = {0, -1};
+  long v1[] = {a->x - b->x, a->y - b->y};
+  long v2[] = {0, -1};
 
   float theta = acos(dot_product(v1, v2) / magnitude(v1)*magnitude(v2));
   if (a->x > b->x) {
@@ -302,10 +303,10 @@ float max(float *arr, int length) {
   return max;
 }
 
-int dot_product(int *v1, int* v2) {
+long dot_product(long *v1, long* v2) {
   return v1[0]*v2[0] + v1[1]*v2[1];
 }
 
-float magnitude(int *v) {
+float magnitude(long *v) {
   return sqrt(dot_product(v,v));
 }
