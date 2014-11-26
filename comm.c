@@ -27,6 +27,9 @@ void comm_handler() {
 
 void receiver_handler() {
   m_rf_read(buffer,PACKET_LENGTH);
+  float *b = (float *) buffer;
+  sprintf(buf, "rt:%.3f \t gt:%.3f\n", b[0], b[1]);
+  send_buf(buf);
 }
 
 void send_camera_data(unsigned int* blobs, float x, float y) {

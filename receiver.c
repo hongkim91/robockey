@@ -24,13 +24,13 @@ int main(void) {
   comm_init(RXADDRESS);
 
   while(1) {
-    while(!m_usb_rx_available());  	//wait for an indication from the computer
-    rx_buffer = m_usb_rx_char();  	//grab the computer packet
-    m_usb_rx_flush();  		//clear buffer
+    /* while(!m_usb_rx_available());  	//wait for an indication from the computer */
+    /* rx_buffer = m_usb_rx_char();  	//grab the computer packet */
+    /* m_usb_rx_flush();  		//clear buffer */
 
-    if(rx_buffer == 1) {
-      live_plot_data();
-    }
+    /* if(rx_buffer == 1) { */
+    /*   live_plot_data(); */
+    /* } */
   }
   return 0;
 }
