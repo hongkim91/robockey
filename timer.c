@@ -9,11 +9,11 @@
 // motor enable pin pwm timer.
 void init_timer1()
 {
-  // set prescaler to /256
-  // timer freq = 16MHz /256 = 62.5kHz
-  set(TCCR1B,CS12);
+  // set prescaler to /1
+  // timer freq = 16MHz 
+  clear(TCCR1B,CS12);
   clear(TCCR1B,CS11);
-  clear(TCCR1B,CS10);
+  set(TCCR1B,CS10);
 
   // set timer mode: (mode 5) UP to 0x00FF (8-bit), PWM mode
   // pwm freq = timer freq / 256 = 244Hz
@@ -23,8 +23,8 @@ void init_timer1()
   set(TCCR1A,WGM10);
 
   // set OCR1A and OCR1B ceilings
-  OCR1A = 255;
-  OCR1B = 255;
+  OCR1A = 200;
+  OCR1B = 200;
 
   // OCR1A output compare: B5 clear at OCR1A, set at rollover
   set(TCCR1A, COM1A1);
@@ -58,3 +58,4 @@ void init_timer3() {
   // enable interrput when timer is OCR1A
   set(TIMSK3,OCIE3A);
 }
+

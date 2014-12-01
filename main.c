@@ -7,6 +7,7 @@
 #include "debug.h"
 #include "motor.h"
 #include "localization.h"
+#include "adc.h"
 
 #define RXADDRESS 84
 
@@ -33,6 +34,9 @@ int main(void) {
   // init motor pins.
   motor_init();
 
+  // init adc
+  init_ADC();
+
   // motor enable pin pwm timer.
   /* init_timer1(); */
 
@@ -42,10 +46,14 @@ int main(void) {
   // mWii init.
   camera_init();
 
-  // rf communicaiton init.
-  comm_init(RXADDRESS);
+  //motors timer
+  init_timer1();
 
-  robot_goal[1] = create_point(820, 350);
+
+  // rf communicaiton init.
+  // comm_init(RXADDRESS);
+
+  // robot_goal[1] = create_point(820, 350);
 
   /* rotate(CLOCKWISE); */
   /* go(); */
@@ -53,41 +61,53 @@ int main(void) {
   /* /\* go(); *\/ */
 
   while(1) {
-    if (new_camera_data_flag) {
-      /* m_red(TOGGLE); */
-      camera_handler(blobs, &x, &y, &robot_theta);
-      if (x > 800) {
-        stop();
-        continue;
-      }
 
-      robot_goal[0] = create_point(x,y);
-      goal_theta = determine_angle(robot_goal);
-      if (fabs(robot_theta - goal_theta) < 0.20) {
-        m_red(ON);
-        m_green(OFF);
-        /* stop(); */
-        go_forward();
-      } else {
-        m_red(OFF);
-        m_green(ON);
-        rotate(CLOCKWISE);
-        go();
-      }
+    update_ADC();
+    filter_sensor_values();
+    find_puck();
+    // print_filtered_values();
 
-      /* send_camera_data(blobs, robot_theta*57.3, goal_theta*57.3); */
+    // m_usb_tx_int(OCR1A);
+    // m_usb_tx_string(" \n ");
+    // m_usb_tx_int(OCR1B);
+    
+  
 
-      send_float("robot_theta", robot_theta * 57.3);
-      send_float("goal_theta", goal_theta * 57.3);
-      free(robot_goal[0]);
-      /* send_camera_data(blobs, x, y); */
-      new_camera_data_flag = 0;
-    }
-    if (new_packet_flag) {
-      m_green(TOGGLE);
-      comm_handler();
-      new_packet_flag = 0;
-    }
+    // if (new_camera_data_flag) {
+    //   /* m_red(TOGGLE); */
+    //   camera_handler(blobs, &x, &y, &robot_theta);
+    //   if (x > 800) {
+    //     stop();
+    //     continue;
+    //   }
+
+    //   robot_goal[0] = create_point(x,y);
+    //   goal_theta = determine_angle(robot_goal);
+    //   if (fabs(robot_theta - goal_theta) < 0.20) {
+    //     m_red(ON);
+    //     m_green(OFF);
+    //     /* stop(); */
+    //     go_forward();
+    //   } else {
+    //     m_red(OFF);
+    //     m_green(ON);
+    //     rotate(CLOCKWISE);
+    //     go();
+    //   }
+
+    //   /* send_camera_data(blobs, robot_theta*57.3, goal_theta*57.3); */
+
+    //   send_float("robot_theta", robot_theta * 57.3);
+    //   send_float("goal_theta", goal_theta * 57.3);
+    //   free(robot_goal[0]);
+    //   /* send_camera_data(blobs, x, y); */
+    //   new_camera_data_flag = 0;
+    // }
+    // if (new_packet_flag) {
+    //   m_green(TOGGLE);
+    //   comm_handler();
+    //   new_packet_flag = 0;
+    // }
   }
   return 0;
 }
@@ -101,4 +121,11 @@ ISR(TIMER3_COMPA_vect) {
 ISR(INT2_vect){
   new_packet_flag = 1;
 }
+
+//adc interrupt
+ISR(ADC_vect)
+{  // this interrupt is present to clear ADCSRA: ADIF flag (in this
+    // case write a logivcal one to it)
+}
+
 
