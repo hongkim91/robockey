@@ -10,7 +10,7 @@
 void init_timer1()
 {
   // set prescaler to /1
-  // timer freq = 16MHz 
+  // timer freq = 16MHz
   clear(TCCR1B,CS12);
   clear(TCCR1B,CS11);
   set(TCCR1B,CS10);
