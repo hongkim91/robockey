@@ -9,46 +9,9 @@
 #define CENTER_X (RINK_PIXEL_WIDTH/2)
 #define CENTER_Y (RINK_PIXEL_HEIGHT/2)
 
-void getData(unsigned int *data, char *line);
-void parsePoints(unsigned int *data, POINT **points);
-
-FPOINT *determine_position(unsigned int *data);
-int find_axial_points(POINT **points, POINT **axial_points);
-int find_axis_direction(POINT **axial_points, POINT *p3);
-float determine_angle(POINT **axial_points);
-FPOINT *rotate_point(POINT *p, float theta);
-FPOINT *mid_point(FPOINT *p1, FPOINT *p2);
-
-POINT* create_point(int x, int y);
-FPOINT *create_fpoint(float x, float y);
-POINT *find_third_point(POINT **points, POINT **axial_points);
-int num_points(POINT **points);
-float distance(POINT *p1, POINT *p2);
-float max(float *arr, int length);
-long dot_product(long *v1, long* v2);
-float magnitude(long *v);
-
 int initialized = 0;
 POINT *axial_points[2];
 POINT *points[4];
-
-/* int main() */
-/* { */
-/*   /\* FILE *file = fopen("A.csv", "r"); *\/ */
-/*   /\* FILE *file = fopen("B.csv", "r"); *\/ */
-/*   FILE *file = fopen("C.csv", "r"); */
-
-/*   unsigned int data[12]; */
-/*   char line[128]; */
-
-/*   while (fgets(line, 128, file)) { */
-/*     getData(data, line); */
-
-/*     FPOINT *mp = determine_position(data); */
-/*     printf("x:%f, y:%f\n", mp->x, mp->y); */
-/*     free(mp); */
-/*   } */
-/* } */
 
 /*
  * DATA PARSING
@@ -96,7 +59,7 @@ void parsePoints(unsigned int *data, POINT **points) {
  * 4. Rotate the axis by theta.
  * 5. Calculate mid point of the axis points.
  */
-FPOINT *determine_position(unsigned int *data) {
+POINT *determine_position(unsigned int *data) {
   float theta;
 
   if (!initialized) {
@@ -112,11 +75,11 @@ FPOINT *determine_position(unsigned int *data) {
   parsePoints(data, points);
 
   if (!find_axial_points(points, axial_points)) {
-    return create_fpoint(0,0);
+    return create_point(0,0);
   }
   if (!find_axis_direction(axial_points,
                            find_third_point(points, axial_points))) {
-    return create_fpoint(0,0);
+    return create_point(0,0);
   }
   theta = determine_angle(axial_points);
 
@@ -125,7 +88,7 @@ FPOINT *determine_position(unsigned int *data) {
   FPOINT *mp = mid_point(rp1, rp2);
 
   // The camera's coordinate system has its origin in the top-right.
-  FPOINT *pos = create_fpoint(RINK_PIXEL_WIDTH - mp->x, mp->y);
+  POINT *pos = create_point(RINK_PIXEL_WIDTH - mp->x, mp->y);
   pos->theta = theta;
 
   free(rp1);
@@ -310,3 +273,23 @@ long dot_product(long *v1, long* v2) {
 float magnitude(long *v) {
   return sqrt(dot_product(v,v));
 }
+
+// INDEPENDENT LOCALIZATION TESTING
+/* int main() */
+/* { */
+/*   /\* FILE *file = fopen("A.csv", "r"); *\/ */
+/*   /\* FILE *file = fopen("B.csv", "r"); *\/ */
+/*   FILE *file = fopen("C.csv", "r"); */
+
+/*   unsigned int data[12]; */
+/*   char line[128]; */
+
+/*   while (fgets(line, 128, file)) { */
+/*     getData(data, line); */
+
+/*     FPOINT *mp = determine_position(data); */
+/*     printf("x:%f, y:%f\n", mp->x, mp->y); */
+/*     free(mp); */
+/*   } */
+/* } */
+
