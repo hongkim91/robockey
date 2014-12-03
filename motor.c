@@ -55,7 +55,7 @@ void stop() {
 void go_forward() {
   clear(PORTB, 4);
   clear(PORTC, 6);
-  
+
 }
 
 void find_puck() {
@@ -71,7 +71,7 @@ void find_puck() {
   int a_derror_r;
   int a_speed;
 
-  
+
 
   speed = (sensor_t_l + sensor_t_r)/ 2;
 
@@ -164,18 +164,25 @@ void find_puck() {
   // }
 }
 
-void set_motor_voltage(int refA, int refB) {
-  OCR1A = refA;
-  OCR1B = refB;
-}
-
 int map_value(int input,int in_min, int in_max, int out_min, int out_max)
 {
-int input_range = in_max - in_min;
-int output_range = out_max - out_min;
-int output;
+  int input_range = in_max - in_min;
+  int output_range = out_max - out_min;
+  int output;
 
-output = (input - in_min)*output_range / input_range + out_min;
-return output;
+  output = (input - in_min)*output_range / input_range + out_min;
+  return output;
+}
 
+void set_motor_duty_cycle(int refA, int refB) {
+  if (refA > 255) {
+    OCR1A = 255;
+  } else {
+    OCR1A = refA;
+  }
+  if (refB > 255) {
+    OCR1B = 255;
+  } else {
+    OCR1B = refB;
+  }
 }

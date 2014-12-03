@@ -2,9 +2,7 @@
 #include <math.h>
 #include "m_general.h"
 #include "localization.h"
-
-#define SYSTEM_CLOCK 16*pow(10,6)
-#define POLLING_FREQ 20
+#include "timer.h"
 
 // motor enable pin pwm timer.
 void init_timer1()

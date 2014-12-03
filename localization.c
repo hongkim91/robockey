@@ -150,7 +150,7 @@ int find_axial_points(POINT **points, POINT **axial_points) {
     return 1;
   } else{
     return 0;
-    printf("LESS THAN THREE STARS!\n");
+    /* printf("LESS THAN THREE STARS!\n"); */
   }
 }
 
@@ -177,7 +177,7 @@ int find_axis_direction(POINT **axial_points, POINT *p3) {
     // already in correct order.
     return 1;
   } else {
-    printf("triangle analysis failed to classify\n");
+    /* printf("triangle analysis failed to classify\n"); */
     return 0;
   }
 }
@@ -272,6 +272,32 @@ long dot_product(long *v1, long* v2) {
 
 float magnitude(long *v) {
   return sqrt(dot_product(v,v));
+}
+
+/*
+ * DEBUGGING RELATED
+ */
+
+void rotate_blobs(unsigned int *blobs, float theta) {
+  parsePoints(blobs, points);
+  FPOINT *rp1 = rotate_point(points[0], theta);
+  FPOINT *rp2 = rotate_point(points[1], theta);
+  FPOINT *rp3 = rotate_point(points[2], theta);
+  FPOINT *rp4 = rotate_point(points[3], theta);
+
+  blobs[0] = rp1->x;
+  blobs[1] = rp1->y;
+  blobs[3] = rp2->x;
+  blobs[4] = rp2->y;
+  blobs[6] = rp3->x;
+  blobs[7] = rp3->y;
+  blobs[9] = rp4->x;
+  blobs[10] = rp4->y;
+
+  free(rp1);
+  free(rp2);
+  free(rp3);
+  free(rp4);
 }
 
 // INDEPENDENT LOCALIZATION TESTING

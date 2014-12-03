@@ -46,34 +46,35 @@ int main(void) {
   // rf communicaiton init.
   /* comm_init(RXADDRESS); */
 
+  clear(PORTB, 4);
+  clear(PORTC, 6);
+
   while(1) {
-     update_ADC(); 
-     filter_sensor_values(); 
-     find_puck(); 
+     update_ADC();
+     filter_sensor_values();
+     find_puck();
      // print_filtered_values();
 
-   
+
 
     // m_usb_tx_int(OCR1A);
     // m_usb_tx_string(" \n ");
     // m_usb_tx_int(OCR1B);
 
-  //   if (new_camera_data_flag) {
-  //     camera_handler(blobs);
-  //     new_camera_data_flag = 0;
-  //   }
+    if (new_camera_data_flag) {
+      /* m_green(TOGGLE); */
+      camera_handler(blobs);
+      new_camera_data_flag = 0;
+    }
 
-  //   if (new_packet_flag) {
-  //     m_red(TOGGLE);
-  //     comm_handler();
-  //     new_packet_flag = 0;
-  //   }
-  // }
-  // return 0;
-       }
-     }
-
-
+    if (new_packet_flag) {
+      m_red(TOGGLE);
+      comm_handler();
+      new_packet_flag = 0;
+    }
+  }
+  return 0;
+}
 
 // camera interrupt.
 ISR(TIMER3_COMPA_vect) {

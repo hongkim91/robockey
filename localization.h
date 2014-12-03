@@ -37,4 +37,7 @@ float max(float *arr, int length);
 long dot_product(long *v1, long* v2);
 float magnitude(long *v);
 
+//debugging related
+void rotate_blobs(unsigned int *blobs, float theta);
+
 #endif

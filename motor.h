@@ -25,7 +25,7 @@ void stop();
 void go();
 void go_forward();
 void find_puck();
-void set_motor_voltage(int refA,int refB);
 int map_value(int input,int in_min, int in_max, int out_min, int out_max);
+void set_motor_duty_cycle(int refA, int refB);
 
 #endif
