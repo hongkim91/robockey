@@ -14,8 +14,7 @@
 volatile int new_camera_data_flag = 0;
 volatile int new_packet_flag = 0;
 unsigned int blobs[12];
-
-int found_puck = 0;
+bool have_puck = FALSE;
 
 int main(void) {
   // set system clock to 16MHz.
@@ -52,18 +51,12 @@ int main(void) {
   // clear(PORTC, 6);
 
   while(1) {
-     update_ADC();
-     filter_sensor_values();
-     found_puck = find_puck();
-     // print_filtered_values();
+    update_ADC();
+    filter_sensor_values();
+    have_puck = find_puck();
+    // print_filtered_values();
 
-
-
-    // m_usb_tx_int(OCR1A);
-    // m_usb_tx_string(" \n ");
-    // m_usb_tx_int(OCR1B);
-
-    if (new_camera_data_flag) {
+    if (have_puck && new_camera_data_flag) {
       /* m_green(TOGGLE); */
       if (found_puck) {
         camera_handler(blobs);

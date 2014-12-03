@@ -23,6 +23,32 @@ void comm_init(int rx_addr) {
 void comm_handler() {
   m_rf_read(buffer,PACKET_LENGTH);
   /* send_hex("buf[0]", buffer[0]); */
+  /* switch (buf[0]) { */
+  /* case 0xA0: */
+  /*   m_usb_tx_string("Comm Test.\n"); */
+  /*   break; */
+  /* case 0xA1: */
+  /*   m_usb_tx_string("Play.\n"); */
+  /*   break; */
+  /* case 0xA2: */
+  /*   m_usb_tx_string("Goal R.\n"); */
+  /*   break; */
+  /* case 0xA3: */
+  /*   m_usb_tx_string("GOAL B.\n"); */
+  /*   break; */
+  /* case 0xA4: */
+  /*   m_usb_tx_string("Pause.\n"); */
+  /*   break; */
+  /* case 0xA6: */
+  /*   m_usb_tx_string("Halftime.\n"); */
+  /*   break; */
+  /* case 0xA7: */
+  /*   m_usb_tx_string("Game Over.\n"); */
+  /*   break; */
+  /* case 0xA8: */
+  /*   m_usb_tx_string("Enemy Positions.\n"); */
+  /*   break; */
+  /* } */
 }
 
 void receiver_handler() {
