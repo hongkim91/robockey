@@ -8,7 +8,7 @@
 
 #define BETA 0
 #define Kp 30
-#define Kd 1
+#define Kd 2
 #define Ki 0
 
 POINT *goal = NULL;
@@ -20,8 +20,8 @@ float prev_cf_theta_diff = 0;
 
 void drive_to_goal(POINT *robot) {
   float theta_diff;
-  float tgt_duty_cycle_L = 200;
-  float tgt_duty_cycle_R = 200;
+  float tgt_duty_cycle_L = 250;
+  float tgt_duty_cycle_R = 250;
 
   robot_goal[0] = robot;
   robot_goal[1] = goal;
@@ -50,7 +50,7 @@ void drive_to_goal(POINT *robot) {
 }
 
 int determine_goal(POINT *robot) {
-  if (robot->x != 0 && (goal == NULL) && count > 10) {
+  if (robot->x != 0 && (goal == NULL)) {
     if (robot->x < 500) {
       m_green(ON);
       goal = create_point(850, 350);

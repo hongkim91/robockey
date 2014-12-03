@@ -14,5 +14,6 @@ void send_matlab_blobs(unsigned int* blobs);
 void send_matlab_robot(POINT* robot);
 void send_matlab_localization(unsigned int *blobs);
 void send_blobs(unsigned int *blobs);
+void send_int(char *label, int x);
 
 #endif

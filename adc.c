@@ -11,7 +11,7 @@
 #include "adc.h"
 #include "m_usb.h"
 
-#define BETA 0.00
+#define BETA 0.0
 // define variables 
 char rx_buffer; //computer interactions
 

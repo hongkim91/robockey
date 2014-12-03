@@ -33,6 +33,11 @@ void send_point(int x, int y) {
   send_buf(buf);
 }
 
+void send_int(char *label, int x) {
+  sprintf(buf, "%s: %d\n", label, x);
+  send_buf(buf);
+}
+
 void send_blobs(unsigned int *blobs) {
   sprintf(buf, "[%d,%d]/[%d,%d]/[%d,%d]/[%d,%d]\n",
           blobs[0], blobs[1], blobs[3], blobs[4],

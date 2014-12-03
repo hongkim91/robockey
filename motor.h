@@ -24,7 +24,7 @@ void rotate(int direction);
 void stop();
 void go();
 void go_forward();
-void find_puck();
+int find_puck();
 int map_value(int input,int in_min, int in_max, int out_min, int out_max);
 void set_motor_duty_cycle(int refA, int refB);
 

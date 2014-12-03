@@ -7,11 +7,11 @@
 // motor enable pin pwm timer.
 void init_timer1()
 {
-  // set prescaler to /1
+  // set prescaler to /256
   // timer freq = 16MHz
-  clear(TCCR1B,CS12);
+  set(TCCR1B,CS12);
   clear(TCCR1B,CS11);
-  set(TCCR1B,CS10);
+  clear(TCCR1B,CS10);
 
   // set timer mode: (mode 5) UP to 0x00FF (8-bit), PWM mode
   // pwm freq = timer freq / 256 = 244Hz
