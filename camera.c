@@ -58,20 +58,20 @@ void camera_handler(unsigned int *blobs) {
     m_red(ON);
     m_green(OFF);
     /* stop(); */
-    set_motor_voltage(255);
+    //set_motor_voltage(255);
     go_forward();
   } else if ((robot->theta - goal_theta) > TOLERANCE)  {
     m_red(OFF);
     m_green(ON);
-    set_motor_voltage(50);
+    //set_motor_voltage(50);
     rotate(CLOCKWISE);
-    go();
+    // go();
   } else {
     m_red(OFF);
     m_green(ON);
-    set_motor_voltage(50);
+    //set_motor_voltage(50);
     rotate(CCLOCKWISE);
-    go();
+    // go();
   }
 
   /* send_camera_data(blobs, robot->theta*57.3, goal_theta*57.3); */

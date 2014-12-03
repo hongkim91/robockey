@@ -10,6 +10,8 @@ int derror_l; // derivative error left
 int derror_r; // derivative error right
 int c_l; // adjustment left
 int c_r; // adjustment right
+int refA;
+int refB;
 
 int sensor_t_l; // top left sensor value
 int sensor_t_r;
@@ -23,6 +25,7 @@ void stop();
 void go();
 void go_forward();
 void find_puck();
-void set_motor_voltage(int ref);
+void set_motor_voltage(int refA,int refB);
+int map_value(int input,int in_min, int in_max, int out_min, int out_max);
 
 #endif

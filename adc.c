@@ -11,7 +11,7 @@
 #include "adc.h"
 #include "m_usb.h"
 
-#define BETA 0.70
+#define BETA 0.00
 // define variables 
 char rx_buffer; //computer interactions
 
@@ -229,15 +229,15 @@ void print_raw_values (void)
 {
     
     //print raw values
-    m_usb_tx_uint(F0_val); // back left
+    m_usb_tx_uint(F0_val); // middle
     m_usb_tx_string(" ");
-    m_usb_tx_uint(F1_val); // front left
+    m_usb_tx_uint(F1_val); // top right
     m_usb_tx_string(" ");
-    m_usb_tx_uint(F4_val); // middle 
+    m_usb_tx_uint(F4_val); // back right
     m_usb_tx_string(" ");
-    m_usb_tx_uint(F5_val); // front right
+    m_usb_tx_uint(F5_val); // back left 
     m_usb_tx_string(" ");
-    m_usb_tx_uint(F6_val); // back right
+    m_usb_tx_uint(F6_val); // front left
     m_usb_tx_string("\n");
 
 }
@@ -272,15 +272,15 @@ void filter_sensor_values()
 
 void print_filtered_values()
 {
-    m_usb_tx_int(filtered_sensor_values[0]); // back left
+    m_usb_tx_int(filtered_sensor_values[0]); // middle 
     m_usb_tx_string(" ");
-    m_usb_tx_int(filtered_sensor_values[1]); // front left
+    m_usb_tx_int(filtered_sensor_values[1]); // top right 
     m_usb_tx_string(" ");
-    m_usb_tx_int(filtered_sensor_values[2]); // middle 
+    m_usb_tx_int(filtered_sensor_values[2]); // back right  
     m_usb_tx_string(" ");
-    m_usb_tx_int(filtered_sensor_values[3]); // front right
+    m_usb_tx_int(filtered_sensor_values[3]); // back left
     m_usb_tx_string(" ");
-    m_usb_tx_int(filtered_sensor_values[4]); // back right
+    m_usb_tx_int(filtered_sensor_values[4]); // front left
     m_usb_tx_string("\n");
 
 }
