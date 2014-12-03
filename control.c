@@ -7,7 +7,7 @@
 #define LEFT 2
 
 #define BETA 0
-#define Kp 30
+#define Kp 50
 #define Kd 2
 #define Ki 0
 
@@ -20,8 +20,8 @@ float prev_cf_theta_diff = 0;
 
 void drive_to_goal(POINT *robot) {
   float theta_diff;
-  float tgt_duty_cycle_L = 250;
-  float tgt_duty_cycle_R = 250;
+  float tgt_duty_cycle_L = 200;
+  float tgt_duty_cycle_R = 200;
 
   robot_goal[0] = robot;
   robot_goal[1] = goal;
@@ -57,7 +57,7 @@ int determine_goal(POINT *robot) {
       goal_direction = RIGHT;
     } else {
       m_red(ON);
-      goal = create_point(200, 350);
+      goal = create_point(150, 300);
       goal_direction = LEFT;
     }
   } else {

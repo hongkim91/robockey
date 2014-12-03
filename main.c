@@ -14,7 +14,7 @@
 volatile int new_camera_data_flag = 0;
 volatile int new_packet_flag = 0;
 unsigned int blobs[12];
-bool have_puck = FALSE;
+/* bool have_puck = FALSE; */
 
 int main(void) {
   // set system clock to 16MHz.
@@ -47,20 +47,16 @@ int main(void) {
   // rf communicaiton init.
   /* comm_init(RXADDRESS); */
 
-  // clear(PORTB, 4);
-  // clear(PORTC, 6);
-
   while(1) {
     update_ADC();
     filter_sensor_values();
-    have_puck = find_puck();
-    // print_filtered_values();
+    /* find_puck(); */
+    print_filtered_values();
 
-    if (have_puck && new_camera_data_flag) {
+    if (find_puck() && new_camera_data_flag) {
+    /* if (new_camera_data_flag) { */
       /* m_green(TOGGLE); */
-      if (found_puck) {
-        camera_handler(blobs);
-      }
+      camera_handler(blobs);
       new_camera_data_flag = 0;
     }
 
