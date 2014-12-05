@@ -53,8 +53,10 @@ void go_forward() {
 }
 
 bool find_puck() {
-  float KP = .17; //proportional term
-  float KD = 0; // derivative term
+  /* float KP = .10; //proportional term */
+  /* float KD = 1; // derivative term */
+  float KP = .15; //proportional term
+  float KD = .7; // derivative term
 
   int tgt_duty_cycle_L = 170;
   int tgt_duty_cycle_R = 170;
@@ -74,12 +76,13 @@ bool find_puck() {
   }
 
   if (!have_puck) {
-    if (sensor_middle > 150) {
+    if (sensor_middle > 150) {// ||
+        /* ((sensor_t_l + sensor_t_r) > (sensor_b_l + sensor_b_r))) { */
       tgt_duty_cycle_L = 130;
       tgt_duty_cycle_R = 130;
     } else {
       KP = (200 - sensor_middle)/100 * KP;
-      KD = 6;
+      KD = 5;
       /* tgt_duty_cycle_L = sensor_middle-50; */
       /* tgt_duty_cycle_R = sensor_middle-50; */
       tgt_duty_cycle_L = 0;

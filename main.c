@@ -8,13 +8,13 @@
 #include "motor.h"
 #include "localization.h"
 #include "adc.h"
+#include "control.h"
 
 #define RXADDRESS 84
 
 volatile int new_camera_data_flag = 0;
 volatile int new_packet_flag = 0;
 unsigned int blobs[12];
-/* bool have_puck = FALSE; */
 
 int main(void) {
   // set system clock to 16MHz.
@@ -51,12 +51,16 @@ int main(void) {
     update_ADC();
     filter_sensor_values();
     /* find_puck(); */
-    print_filtered_values();
+    /* print_filtered_values(); */
+
+    if (new_camera_data_flag) {
+      set_goal(blobs);
+    }
 
     if (find_puck() && new_camera_data_flag) {
     /* if (new_camera_data_flag) { */
       /* m_green(TOGGLE); */
-      camera_handler(blobs);
+      /* camera_handler(blobs); */
       new_camera_data_flag = 0;
     }
 
