@@ -49,18 +49,20 @@ int main(void) {
 
   while(1) {
     update_ADC();
-    filter_sensor_values();
-    find_puck(); 
+    /* find_puck(); */
     // go_forward();
-  
-    // print_filtered_values();
 
-    // if (find_puck() && new_camera_data_flag) {
-    // /* if (new_camera_data_flag) { */
-    //    m_green(TOGGLE); 
-    //   camera_handler(blobs);
-    //   new_camera_data_flag = 0;
-    // }
+    // print_sensor_values();
+
+    if (new_camera_data_flag) {
+      set_goal(blobs);
+    }
+    if (find_puck() && new_camera_data_flag) {
+    /* if (new_camera_data_flag) { */
+      /* m_green(TOGGLE); */
+      camera_handler(blobs);
+      new_camera_data_flag = 0;
+    }
 
   //   if (new_packet_flag) {
   //     m_red(TOGGLE);

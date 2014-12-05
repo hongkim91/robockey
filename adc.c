@@ -67,25 +67,23 @@ void update_ADC (void)
 {
     //read ADC value from F0
     ADC_F0();
-    F0_val = ADC;
+    sensor_values[0] = ADC;
 
     //read ADC value from F1
     ADC_F1();
-    F1_val = ADC;
+    sensor_values[1] = ADC;
 
     //read ADC value from F4
     ADC_F4();
-    F4_val = ADC;
+    sensor_values[2] = ADC;
 
     //read ADC value from F5
     ADC_F5();
-    F5_val = ADC;
+    sensor_values[3] = ADC;
 
     //read ADC value from F6
     ADC_F6();
-    F6_val = ADC;
-
-    filter_sensor_values();
+    sensor_values[4] = ADC;
 }
 
 void ADC_F0 (void)
@@ -106,8 +104,6 @@ void ADC_F0 (void)
 
     //check if flag is set
     while(!check(ADCSRA,ADIF));
-
-    F0_val = ADC;
 }
 
 void ADC_F1 (void)
@@ -127,8 +123,6 @@ void ADC_F1 (void)
 
     //check if flag is set
     while(!check(ADCSRA,ADIF));
-
-    F1_val = ADC;
 }
 
 void ADC_F4 (void)
@@ -147,8 +141,6 @@ void ADC_F4 (void)
 
     //check if flag is set
     while(!check(ADCSRA,ADIF));
-
-    F4_val = ADC;
 }
 
 void ADC_F5(void)
@@ -167,8 +159,6 @@ void ADC_F5(void)
 
     //check if flag is set
     while(!check(ADCSRA,ADIF));
-
-    F5_val = ADC;
 }
 
 void ADC_F6(void)
@@ -187,23 +177,6 @@ void ADC_F6(void)
 
     //check if flag is set
     while(!check(ADCSRA,ADIF));
-
-    F6_val = ADC;
-}
-
-void print_raw_values (void)
-{
-    //print raw values
-    m_usb_tx_uint(F0_val); // middle
-    m_usb_tx_string(" ");
-    m_usb_tx_uint(F1_val); // top right
-    m_usb_tx_string(" ");
-    m_usb_tx_uint(F4_val); // back right
-    m_usb_tx_string(" ");
-    m_usb_tx_uint(F5_val); // back left
-    m_usb_tx_string(" ");
-    m_usb_tx_uint(F6_val); // front left
-    m_usb_tx_string("\n");
 }
 
 void matlab(void)
@@ -214,37 +187,23 @@ void matlab(void)
   m_usb_rx_flush();               //clear buffer
 
   if(rx_buffer == 1) {            //computer wants ir data
-    print_raw_values();
+    print_sensor_values();
   }
 }
 
-void filter_sensor_values()
-//
+void print_sensor_values()
 {
-   int raw_sensor_values[] = {F0_val,F1_val,F4_val,F5_val,F6_val};
-
-   for (filtered_index = 0; filtered_index < 5; filtered_index++)
-    {
-        //use old values in new_ADC_values to smooth out new values in new_ADC_values
-        filtered_sensor_values[filtered_index] = (unsigned int) ((float)BETA*filtered_sensor_values[filtered_index] + (float)(1-BETA)*raw_sensor_values[filtered_index]);
-
-    }
-}
-
-void print_filtered_values()
-{
-    m_usb_tx_int(filtered_sensor_values[0]); // middle
+    m_usb_tx_int(sensor_values[2]); // back left
     m_usb_tx_string(" ");
-    m_usb_tx_int(filtered_sensor_values[1]); // top right
+    m_usb_tx_int(sensor_values[1]); // top left
     m_usb_tx_string(" ");
-    m_usb_tx_int(filtered_sensor_values[2]); // back right
+    m_usb_tx_int(sensor_values[0]); // middle
     m_usb_tx_string(" ");
-    m_usb_tx_int(filtered_sensor_values[3]); // back left
+    m_usb_tx_int(sensor_values[4]); // top right
     m_usb_tx_string(" ");
-    m_usb_tx_int(filtered_sensor_values[4]); // front left
+    m_usb_tx_int(sensor_values[3]); // back right
     m_usb_tx_string("\n");
 }
 
-
-
-
+void offset_sensor_values() {
+}
