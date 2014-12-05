@@ -53,17 +53,18 @@ void go_forward() {
 }
 
 bool find_puck() {
-  float KP = .17; //proportional term
-  float KD = 0; // derivative term
+  // float KP = .17; //proportional term
+  float KD = 2; // derivative term
+  float KP = .6;
 
   int tgt_duty_cycle_L = 170;
   int tgt_duty_cycle_R = 170;
 
-  int sensor_b_l = filtered_sensor_values[3];
-  int sensor_t_l = filtered_sensor_values[4];
+  int sensor_b_l = filtered_sensor_values[2];
+  int sensor_t_r = filtered_sensor_values[4];
   int sensor_middle = filtered_sensor_values[0];
-  int sensor_t_r = filtered_sensor_values[1];
-  int sensor_b_r = filtered_sensor_values[2];
+  int sensor_t_l = filtered_sensor_values[1];
+  int sensor_b_r = filtered_sensor_values[3];
 
   have_puck = FALSE;
 
@@ -79,7 +80,7 @@ bool find_puck() {
       tgt_duty_cycle_R = 130;
     } else {
       KP = (200 - sensor_middle)/100 * KP;
-      KD = 6;
+      KD = 8;
       /* tgt_duty_cycle_L = sensor_middle-50; */
       /* tgt_duty_cycle_R = sensor_middle-50; */
       tgt_duty_cycle_L = 0;
@@ -103,45 +104,45 @@ bool find_puck() {
     send_float("tgt_duty_cycle_R", tgt_duty_cycle_R);
     send_float("tgt_duty_cycle_L", tgt_duty_cycle_L);
 
-    set_motor_duty_cycle(tgt_duty_cycle_R, tgt_duty_cycle_L);
+    set_motor_duty_cycle(tgt_duty_cycle_L, tgt_duty_cycle_R);
     prev_error_r = error_r;
     prev_error_l = error_l;
   }
   return have_puck;
 }
 
-//refA: right
-//refB: left
+//refA: left
+//refB: right
 
 void set_motor_duty_cycle(int refA, int refB) {
   if (refA > 255) {
     OCR1A = 255;
-    clear(PORTB, 4);
+    set(PORTB, 4);
   } else if (refA < -255) {
     OCR1A = 255;
-    set(PORTB, 4);
+    clear(PORTB, 4);
   } else if (refA < 0) {
     OCR1A = abs(refA);
-    set(PORTB, 4);
+    clear(PORTB, 4);
   } else {
     OCR1A = refA;
-    clear(PORTB, 4);
+    set(PORTB, 4);
   }
   if (refB > 255) {
     OCR1B = 255;
-    clear(PORTC, 6);
+    set(PORTC, 6);
   } else if (refB < -255) {
     OCR1B = 255;
-    set(PORTC, 6);
+    clear(PORTC, 6);
   } else if (refB < 0) {
     OCR1B = abs(refB);
-    set(PORTC, 6);
+    clear(PORTC, 6);
   } else {
     OCR1B = refB;
-    clear(PORTC, 6);
+    set(PORTC, 6);
   }
   send_float("OCR1A", OCR1A);
-  send_float("direction", check(PINB, 4));
+  send_float("direction left", check(PINB, 4));
   send_float("OCR1B", OCR1B);
-  send_float("direction", check(PINC, 6));
+  send_float("direction right", check(PINC, 6));
 }
