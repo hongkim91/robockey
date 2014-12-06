@@ -12,6 +12,7 @@ void ADC_F6 ();
 void matlab();
 void print_sensor_values();
 void filter_sensor_values();
+void offset_sensor_values();
 
 int sensor_values[5];
 

@@ -8,6 +8,7 @@
 #include "motor.h"
 #include "localization.h"
 #include "adc.h"
+#include "control.h"
 
 #define RXADDRESS 84
 
@@ -49,10 +50,10 @@ int main(void) {
 
   while(1) {
     update_ADC();
+    /* print_sensor_values(); */
+    /* estimate_puck_theta(); */
     /* find_puck(); */
     // go_forward();
-
-    // print_sensor_values();
 
     if (new_camera_data_flag) {
       set_goal(blobs);

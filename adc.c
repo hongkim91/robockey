@@ -9,7 +9,8 @@
 
 #include "m_general.h"
 #include "adc.h"
-#include "m_usb.h"
+#include "debug.h"
+#include <stdio.h>
 
 #define BETA 0.0
 // define variables
@@ -84,6 +85,8 @@ void update_ADC (void)
     //read ADC value from F6
     ADC_F6();
     sensor_values[4] = ADC;
+
+    offset_sensor_values();
 }
 
 void ADC_F0 (void)
@@ -191,19 +194,37 @@ void matlab(void)
   }
 }
 
+char buf[100];
 void print_sensor_values()
 {
-    m_usb_tx_int(sensor_values[2]); // back left
-    m_usb_tx_string(" ");
-    m_usb_tx_int(sensor_values[1]); // top left
-    m_usb_tx_string(" ");
-    m_usb_tx_int(sensor_values[0]); // middle
-    m_usb_tx_string(" ");
-    m_usb_tx_int(sensor_values[4]); // top right
-    m_usb_tx_string(" ");
-    m_usb_tx_int(sensor_values[3]); // back right
-    m_usb_tx_string("\n");
+  sprintf(buf, "%3d %3d %3d %3d %3d\n", sensor_values[2], sensor_values[1],
+          sensor_values[0], sensor_values[4], sensor_values[3]);
+  send_buf(buf);
 }
 
 void offset_sensor_values() {
+  int i;
+  int lowest_idx1 = 0;
+  int lowest_idx2 = 0;
+  int avg_sensor_value;
+
+  for (i=1; i<5; i++) {
+    if (lowest_idx1 == 0 ||
+        sensor_values[i] < sensor_values[lowest_idx1]) {
+      lowest_idx1 = i;
+    }
+  }
+  for (i=1; i<5; i++) {
+    if (i == lowest_idx1) continue;
+    if (lowest_idx2 == 0 ||
+        sensor_values[i] < sensor_values[lowest_idx2]) {
+      lowest_idx2 = i;
+    }
+  }
+  avg_sensor_value = (sensor_values[lowest_idx1] +
+                      sensor_values[lowest_idx2])/2;
+
+  for (i=1; i<5; i++) {
+    sensor_values[i] -= avg_sensor_value;
+  }
 }

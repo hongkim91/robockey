@@ -11,5 +11,6 @@ void go();
 void go_forward();
 bool find_puck();
 void set_motor_duty_cycle(int refA, int refB);
+int speed(int theta_est);
 
 #endif

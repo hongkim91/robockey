@@ -3,13 +3,14 @@
 #include "motor.h"
 #include "adc.h"
 #include "timer.h"
+#include "control.h"
 
 #define RIGHT 1
 #define LEFT 2
 
 #define BETA 0
-#define Kp 50
-#define Kd 2
+#define Kp 80
+#define Kd 3
 #define Ki 0
 
 #define PI 3.145
@@ -31,8 +32,8 @@ float translate_theta(float alpha, float beta) {
 
 void drive_to_goal(POINT *robot) {
   float theta_diff;
-  float tgt_duty_cycle_L = 130;
-  float tgt_duty_cycle_R = 130;
+  float tgt_duty_cycle_L = 170;
+  float tgt_duty_cycle_R = 170;
 
   robot_goal[0] = robot;
   robot_goal[1] = goal;
@@ -51,7 +52,7 @@ void drive_to_goal(POINT *robot) {
   tgt_duty_cycle_R += Kp * cf_theta_diff;
   tgt_duty_cycle_R += Kd * (cf_theta_diff - prev_cf_theta_diff)/DT;
 
-  set_motor_duty_cycle((int)tgt_duty_cycle_L, (int)tgt_duty_cycle_R);
+  set_motor_duty_cycle(tgt_duty_cycle_L, tgt_duty_cycle_R);
   prev_cf_theta_diff = cf_theta_diff;
 
   send_float("robot->theta", robot->theta * 57.3);
@@ -65,11 +66,11 @@ int determine_goal(POINT *robot) {
   if (robot->x != 0 && (goal == NULL)) {
     if (robot->x < 500) {
       m_green(ON);
-      goal = create_point(850, 350);
+      goal = create_point(850, 360);
       goal_direction = RIGHT;
     } else {
       m_red(ON);
-      goal = create_point(150, 300);
+      goal = create_point(150, 330);
       goal_direction = LEFT;
     }
   } else {
@@ -84,23 +85,43 @@ int determine_goal(POINT *robot) {
   }
 }
 
-/* void estimate_puck_theta() { */
-/*   int theta_est; */
+int determine_quadrant() {
+  int sensor_b_l = sensor_values[2];
+  int sensor_t_l = sensor_values[1];
+  int sensor_t_r = sensor_values[4];
+  int sensor_b_r = sensor_values[3];
 
-/*   int sensor_b_l = sensor_values[2]; */
-/*   int sensor_t_l = sensor_values[1]; */
-/*   int sensor_middle = sensor_values[0]; */
-/*   int sensor_t_r = sensor_values[4]; */
-/*   int sensor_b_r = sensor_values[3]; */
+  if (sensor_t_r > sensor_t_l && sensor_t_r > sensor_b_l &&
+      sensor_t_r > sensor_b_r) {
+    /* m_usb_tx_string("TOP RIGHT QUADRANT.\n"); */
+    return T_R;
+  } else if (sensor_b_r > sensor_t_l && sensor_b_r > sensor_b_l) {
+    /* m_usb_tx_string("BOTTOM RIGHT QUADRANT.\n"); */
+    return B_R;
+  } else if (sensor_b_l > sensor_t_l) {
+    /* m_usb_tx_string("BOTTOM LEFT QUADRANT.\n"); */
+    return B_L;
+  } else {
+    /* m_usb_tx_string("TOP LEFT QUADRANT.\n"); */
+    return T_L;
+  }
+}
 
-/*   if (sensor_t_r > sensor_t_l && sensor_t_r > sensor_b_l && */
-/*       sensor_t_r > sensor_b_r) { */
-/*     m_usb_tx_string("TOP RIGHT QUADRANT.\n"); */
-/*   } else if (sensor_b_r > sensor_t_l && sensor_b_r > sensor_b_l) { */
-/*     m_usb_tx_string("BOTTOM RIGHT QUADRANT.\n"); */
-/*   } else if (sensor_b_l > sensor_t_l) { */
-/*     m_usb_tx_string("BOTTOM LEFT QUADRANT.\n"); */
-/*   } else { */
-/*     m_usb_tx_string("TOP LEFT QUADRANT.\n"); */
-/*   } */
-/* } */
+int estimate_puck_theta() {
+  int sensor_b_l = sensor_values[2];
+  int sensor_t_l = sensor_values[1];
+  int sensor_t_r = sensor_values[4];
+  int sensor_b_r = sensor_values[3];
+
+  switch (determine_quadrant()) {
+  case T_R:
+    return sensor_t_r - sensor_t_l;
+  case B_R:
+    return sensor_b_r + sensor_b_l;
+  case B_L:
+    return -(sensor_b_r + sensor_b_l);
+  case T_L:
+    return sensor_t_r - sensor_t_l;
+  }
+  return 0; // shouldn't happen.
+}
