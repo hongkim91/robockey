@@ -19,7 +19,7 @@ bool play = FALSE;
 void comm_init(int rx_addr) {
   m_bus_init();
   if (!m_rf_open(CHANNEL, rx_addr, PACKET_LENGTH)) {
-    m_red(ON);
+    /* m_red(ON); */
   }
 }
 
@@ -32,8 +32,10 @@ void comm_handler() {
     m_usb_tx_string("Comm Test.\n");
     if (direction == RIGHT) {
       m_red(TOGGLE);
+      bi_color_red(TOGGLE);
     } else if (direction == LEFT) {
       m_green(TOGGLE);
+      bi_color_blue(TOGGLE);
     }
     send_float("goal_direction", direction);
     send_float("play", is_play());
@@ -41,10 +43,14 @@ void comm_handler() {
     m_usb_tx_string("Play.\n");
     if (direction == RIGHT) {
       m_red(ON);
+      bi_color_red(ON);
       m_green(OFF);
+      bi_color_blue(OFF);
     } else if (direction == LEFT) {
       m_red(OFF);
+      bi_color_red(OFF);
       m_green(ON);
+      bi_color_blue(ON);
     }
     play = TRUE;
   } else if (buffer[0] == ((char) 0xA4)) {
@@ -60,8 +66,8 @@ void comm_handler() {
 }
 
 bool is_play() {
-  return TRUE;
-  /* return play; */
+  /* return TRUE; */
+  return play;
 }
 void receiver_handler() {
   m_rf_read(buffer,PACKET_LENGTH);

@@ -7,7 +7,7 @@
 #include "debug.h"
 #include "control.h"
 
-#define SPEED_LIMIT 255
+#define PUCK_SPEED_LIMIT 190.0
 
 bool first_run = FALSE;
 int prev_theta_est = 0;
@@ -115,8 +115,8 @@ void find_puck() {
   int turn = KP * theta_est + KD *(theta_est - prev_theta_est);
   prev_theta_est = theta_est;
   int speed_val = speed(theta_est);
-  if (speed_val > SPEED_LIMIT - abs(turn)) {
-    speed_val = SPEED_LIMIT - abs(turn);
+  if (speed_val > PUCK_SPEED_LIMIT - abs(turn)) {
+    speed_val = PUCK_SPEED_LIMIT - abs(turn);
   }
 
   int tgt_duty_cycle_L = speed_val + turn;
@@ -142,14 +142,16 @@ int speed(int theta_est) {
   switch (determine_quadrant()) {
   case T_R:
     if (sensor_t_l > sensor_b_r) {
-      return SPEED_LIMIT - (255.0/abs(theta_est_cutoff)) * theta_est;
+      return (PUCK_SPEED_LIMIT -
+              (PUCK_SPEED_LIMIT/(float) abs(theta_est_cutoff)) * theta_est);
     } else {
       theta_est_cutoff = theta_est;
       return 0;
     }
   case T_L:
     if (sensor_t_r > sensor_b_l) {
-      return SPEED_LIMIT + (255.0/abs(theta_est_cutoff)) * theta_est;
+      return (PUCK_SPEED_LIMIT +
+              (PUCK_SPEED_LIMIT/(float) abs(theta_est_cutoff)) * theta_est);
     } else {
       theta_est_cutoff = theta_est;
       return 0;

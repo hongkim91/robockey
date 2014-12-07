@@ -16,5 +16,7 @@ int determine_quadrant();
 float translate_theta(float alpha, float beta);
 int goal_speed(float theta);
 int get_goal_direction();
+void bi_color_red(int mode);
+void bi_color_blue(int mode);
 
 #endif

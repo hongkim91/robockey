@@ -23,7 +23,7 @@ int main(void) {
 
   while(1) {
     update_ADC();
-    print_sensor_values();
+    /* set_motor_duty_cycle(200,200); */
 
     /* if (!is_play()) { */
     /*   set_motor_duty_cycle(0,0); */
@@ -43,10 +43,10 @@ int main(void) {
     /*   camera_timer_flag = 0; */
     /* } */
 
-    if (new_packet_flag) {
-      comm_handler();
-      new_packet_flag = 0;
-    }
+    /* if (new_packet_flag) { */
+    /*   comm_handler(); */
+    /*   new_packet_flag = 0; */
+    /* } */
   }
   return 0;
 }
@@ -61,6 +61,10 @@ void m2_init() {
   // enable switch input pins.
   clear(DDRB, 0);
   clear(DDRB, 1);
+
+  // enable Bi-color LED output pins.
+  /* clear(DDRB, 2); */
+  /* clear(DDRB, 3); */
 
   // usb data channel init.
   debug_init();

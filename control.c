@@ -11,7 +11,7 @@
 
 #define PI 3.145
 
-#define SPEED_LIMIT 255
+#define GOAL_SPEED_LIMIT 190.0
 
 POINT *goal = NULL;
 POINT *robot_goal[2];
@@ -32,8 +32,8 @@ void drive_to_goal(POINT *robot) {
   int turn = Kp * theta_diff + Kd *(theta_diff - prev_theta_diff);
   prev_theta_diff = theta_diff;
   int speed_val = goal_speed(theta_diff);
-  if (speed_val > SPEED_LIMIT - abs(turn)) {
-    speed_val = SPEED_LIMIT - abs(turn);
+  if (speed_val > GOAL_SPEED_LIMIT - abs(turn)) {
+    speed_val = GOAL_SPEED_LIMIT - abs(turn);
   }
 
   int tgt_duty_cycle_L = speed_val - turn;
@@ -60,9 +60,9 @@ int goal_speed(float theta) {
   /* send_float("theta_cutoff", theta_cutoff); */
 
   if (0 < theta && theta <= theta_cutoff) {
-    return SPEED_LIMIT - (255.0/fabs(theta_cutoff)) * theta;
+    return GOAL_SPEED_LIMIT - (GOAL_SPEED_LIMIT/fabs(theta_cutoff)) * theta;
   } else if (-theta_cutoff < theta && theta <= 0) {
-    return SPEED_LIMIT + (255.0/fabs(theta_cutoff)) * theta;
+    return GOAL_SPEED_LIMIT + (GOAL_SPEED_LIMIT/fabs(theta_cutoff)) * theta;
   } else {
     return 0;
   }
@@ -70,22 +70,23 @@ int goal_speed(float theta) {
 
 int determine_goal(POINT *robot) {
   if (goal == NULL) {
-    goal = create_point(850, 420);
-    goal_direction = RIGHT;
+    /* goal = create_point(850, 420); */
+    /* goal_direction = RIGHT; */
 
     /* goal = create_point(120, 400); */
     /* goal_direction = LEFT; */
 
-    /* if (robot->x < 500) { */
-    /*   m_green(ON); */
-    /*   goal = create_point(120, 330); */
-    /*   /\* goal = create_point(850, 380); *\/ */
-    /*   m_usb_tx_string("goal direction: RIGHT\n"); */
-    /* } else { */
-    /*   m_red(ON); */
-    /*   goal = create_point(120, 330); */
-    /*   m_usb_tx_string("goal direction: LEFT\n"); */
-    /* } */
+    if (robot->x < 500) {
+      /* m_green(ON); */
+      goal = create_point(120, 330);
+      goal_direction = RIGHT;
+      m_usb_tx_string("goal direction: RIGHT\n");
+    } else {
+      /* m_red(ON); */
+      goal = create_point(120, 330);
+      goal_direction = LEFT;
+      m_usb_tx_string("goal direction: LEFT\n");
+    }
   }
 
   if (goal != NULL) {
@@ -149,3 +150,24 @@ float translate_theta(float alpha, float beta) {
 int get_goal_direction() {
   return goal_direction;
 }
+
+void bi_color_red(int mode) {
+  if (mode == ON) {
+    set(PORTB, 2);
+  } else if (mode == OFF) {
+    clear(PORTB, 2);
+  } else if (mode == OFF) {
+    toggle(PORTB, 2);
+  }
+}
+
+void bi_color_blue(int mode) {
+  if (mode == ON) {
+    set(PORTB, 3);
+  } else if (mode == OFF) {
+    clear(PORTB, 3);
+  } else if (mode == OFF) {
+    toggle(PORTB, 3);
+  }
+}
+
