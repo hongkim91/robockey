@@ -5,6 +5,8 @@
 #include "m_rf.h"
 #include "debug.h"
 #include "string.h"
+#include "control.h"
+#include "comm.h"
 
 #define CHANNEL 1
 #define PACKET_LENGTH 10
@@ -12,6 +14,7 @@
 
 char buffer[PACKET_LENGTH] = {0,0,0,0,0,0,0,0,0,0};
 char buf[100];
+bool play = FALSE;
 
 void comm_init(int rx_addr) {
   m_bus_init();
@@ -22,35 +25,44 @@ void comm_init(int rx_addr) {
 
 void comm_handler() {
   m_rf_read(buffer,PACKET_LENGTH);
-  /* send_hex("buf[0]", buffer[0]); */
-  /* switch (buf[0]) { */
-  /* case 0xA0: */
-  /*   m_usb_tx_string("Comm Test.\n"); */
-  /*   break; */
-  /* case 0xA1: */
-  /*   m_usb_tx_string("Play.\n"); */
-  /*   break; */
-  /* case 0xA2: */
-  /*   m_usb_tx_string("Goal R.\n"); */
-  /*   break; */
-  /* case 0xA3: */
-  /*   m_usb_tx_string("GOAL B.\n"); */
-  /*   break; */
-  /* case 0xA4: */
-  /*   m_usb_tx_string("Pause.\n"); */
-  /*   break; */
-  /* case 0xA6: */
-  /*   m_usb_tx_string("Halftime.\n"); */
-  /*   break; */
-  /* case 0xA7: */
-  /*   m_usb_tx_string("Game Over.\n"); */
-  /*   break; */
-  /* case 0xA8: */
-  /*   m_usb_tx_string("Enemy Positions.\n"); */
-  /*   break; */
-  /* } */
+  send_hex("buffer[0]", buffer[0]);
+  int direction = get_goal_direction();
+
+  if (buffer[0] == ((char) 0xA0)) {
+    m_usb_tx_string("Comm Test.\n");
+    if (direction == RIGHT) {
+      m_red(TOGGLE);
+    } else if (direction == LEFT) {
+      m_green(TOGGLE);
+    }
+    send_float("goal_direction", direction);
+    send_float("play", is_play());
+  } else if (buffer[0] == ((char) 0xA1)) {
+    m_usb_tx_string("Play.\n");
+    if (direction == RIGHT) {
+      m_red(ON);
+      m_green(OFF);
+    } else if (direction == LEFT) {
+      m_red(OFF);
+      m_green(ON);
+    }
+    play = TRUE;
+  } else if (buffer[0] == ((char) 0xA4)) {
+    m_usb_tx_string("Pause.\n");
+    play = FALSE;
+  } else if (buffer[0] == ((char) 0xA6)) {
+    m_usb_tx_string("Halftime.\n");
+    play = FALSE;
+  } else if (buffer[0] == ((char) 0xA7)) {
+    m_usb_tx_string("Game Over.\n");
+    play = FALSE;
+  }
 }
 
+bool is_play() {
+  return TRUE;
+  /* return play; */
+}
 void receiver_handler() {
   m_rf_read(buffer,PACKET_LENGTH);
   float *b = (float *) buffer;

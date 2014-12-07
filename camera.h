@@ -1,8 +1,10 @@
 #ifndef camera__
 #define camera__
 
+#include "localization.h"
+
 void camera_init();
-void camera_handler(unsigned int *blobs);
-void set_goal(unsigned int *blobs);
+POINT *localize_robot();
+int set_goal();
 
 #endif

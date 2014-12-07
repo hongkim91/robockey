@@ -9,7 +9,6 @@
 
 #define SPEED_LIMIT 255
 
-bool have_puck = FALSE;
 bool first_run = FALSE;
 int prev_theta_est = 0;
 int theta_est_cutoff = 0;
@@ -88,16 +87,23 @@ void set_motor_duty_cycle(int refA, int refB) {
   /* send_float("direction right", check(PINC, 6)); */
 }
 
-bool find_puck() {
+/* bool have_puck() { */
+/*    // SENSOR ON INDEX 0 IS ASSUMED MIDDLE. */
+/*   int sensor_middle = sensor_values[0]; */
+/*   if (sensor_middle>=1010) { */
+/*     return TRUE; */
+/*   } else { */
+/*     return FALSE; */
+/*   } */
+/* } */
+
+bool have_puck() {
+  return !check(PINB, 0) || !check(PINB, 1);
+}
+
+void find_puck() {
   float KP = .1;
   float KD = 1;
-
-  int sensor_middle = sensor_values[0];
-
-  have_puck = FALSE;
-  if (sensor_middle>=1010) {
-    have_puck = TRUE;
-  }
 
   int theta_est = estimate_puck_theta();
   if (!first_run) {
@@ -116,7 +122,7 @@ bool find_puck() {
   int tgt_duty_cycle_L = speed_val + turn;
   int tgt_duty_cycle_R = speed_val - turn;
 
-  m_usb_tx_string("----------------------------------------\n");
+  m_usb_tx_string("--------------------FIND PUCK --------------------\n");
   set_motor_duty_cycle(tgt_duty_cycle_L, tgt_duty_cycle_R);
 
   send_float("theta_est", theta_est);
@@ -125,7 +131,6 @@ bool find_puck() {
 
   send_float("tgt_duty_cycle_R", tgt_duty_cycle_R);
   send_float("tgt_duty_cycle_L", tgt_duty_cycle_L);
-  return have_puck;
 }
 
 int speed(int theta_est) {

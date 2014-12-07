@@ -5,77 +5,87 @@
 #include "timer.h"
 #include "control.h"
 
-#define RIGHT 1
-#define LEFT 2
-
-#define BETA 0
-#define Kp 80
-#define Kd 3
+#define Kp 40
+#define Kd 70
 #define Ki 0
 
 #define PI 3.145
 
-POINT *goal = NULL;
-int goal_direction;
-POINT *robot_goal[2];
-int count = 0;
-float cf_theta_diff = 0;
-float prev_cf_theta_diff = 0;
+#define SPEED_LIMIT 255
 
-float translate_theta(float alpha, float beta) {
-  float theta = alpha - beta;
-  if (theta > PI) {
-    theta = -2*PI + theta;
-  }
-  return theta;
-}
+POINT *goal = NULL;
+POINT *robot_goal[2];
+float prev_theta_diff = 0;
+int goal_direction = 0;
 
 void drive_to_goal(POINT *robot) {
-  float theta_diff;
-  float tgt_duty_cycle_L = 170;
-  float tgt_duty_cycle_R = 170;
-
   robot_goal[0] = robot;
   robot_goal[1] = goal;
   goal->theta = determine_angle(robot_goal);
 
-  theta_diff = robot->theta - goal->theta;
-  /* theta_diff = translate_theta(robot->theta, goal->theta); */
-  if (cf_theta_diff == 0) {
-    cf_theta_diff = theta_diff;
-    prev_cf_theta_diff = theta_diff;
+  /* theta_diff = robot->theta - goal->theta; */
+  float theta_diff = translate_theta(robot->theta, goal->theta);
+  if (prev_theta_diff == 0) {
+    prev_theta_diff = theta_diff;
   }
-  cf_theta_diff = BETA * cf_theta_diff + (1-BETA) * theta_diff;
 
-  tgt_duty_cycle_L -= Kp * cf_theta_diff;
-  tgt_duty_cycle_L -= Kd * (cf_theta_diff - prev_cf_theta_diff)/DT;
-  tgt_duty_cycle_R += Kp * cf_theta_diff;
-  tgt_duty_cycle_R += Kd * (cf_theta_diff - prev_cf_theta_diff)/DT;
+  int turn = Kp * theta_diff + Kd *(theta_diff - prev_theta_diff);
+  prev_theta_diff = theta_diff;
+  int speed_val = goal_speed(theta_diff);
+  if (speed_val > SPEED_LIMIT - abs(turn)) {
+    speed_val = SPEED_LIMIT - abs(turn);
+  }
 
+  int tgt_duty_cycle_L = speed_val - turn;
+  int tgt_duty_cycle_R = speed_val + turn;
+
+  m_usb_tx_string("--------------------FIND GOAL--------------------\n");
   set_motor_duty_cycle(tgt_duty_cycle_L, tgt_duty_cycle_R);
-  prev_cf_theta_diff = cf_theta_diff;
 
+  send_float("sensor_middle", sensor_values[0]);
   send_float("robot->theta", robot->theta * 57.3);
   send_float("goal->theta", goal->theta * 57.3);
-  send_float("cf_theta_diff", cf_theta_diff * 57.3);
+  send_float("theta_diff", theta_diff * 57.3);
+  send_float("turn", turn);
+  send_float("speed_val", speed_val);
+  send_float("speed", goal_speed(theta_diff));
+
   send_float("tgt_duty_cycle_L", tgt_duty_cycle_L);
   send_float("tgt_duty_cycle_R", tgt_duty_cycle_R);
 }
 
-int determine_goal(POINT *robot) {
-  if (robot->x != 0 && (goal == NULL)) {
-    if (robot->x < 500) {
-      m_green(ON);
-      goal = create_point(850, 360);
-      goal_direction = RIGHT;
-    } else {
-      m_red(ON);
-      goal = create_point(150, 330);
-      goal_direction = LEFT;
-    }
+int goal_speed(float theta) {
+  float theta_cutoff = 45.0 * PI/180;
+  /* send_float("theta", theta); */
+  /* send_float("theta_cutoff", theta_cutoff); */
+
+  if (0 < theta && theta <= theta_cutoff) {
+    return SPEED_LIMIT - (255.0/fabs(theta_cutoff)) * theta;
+  } else if (-theta_cutoff < theta && theta <= 0) {
+    return SPEED_LIMIT + (255.0/fabs(theta_cutoff)) * theta;
   } else {
-    count++;
-    send_float("goal_direction", goal_direction);
+    return 0;
+  }
+}
+
+int determine_goal(POINT *robot) {
+  if (goal == NULL) {
+    goal = create_point(850, 420);
+    goal_direction = RIGHT;
+
+    /* goal = create_point(120, 400); */
+    /* goal_direction = LEFT; */
+
+    /* if (robot->x < 500) { */
+    /*   m_green(ON); */
+    /*   goal = create_point(120, 330); */
+    /*   /\* goal = create_point(850, 380); *\/ */
+    /*   m_usb_tx_string("goal direction: RIGHT\n"); */
+    /* } else { */
+    /*   m_red(ON); */
+    /*   goal = create_point(120, 330); */
+    /*   m_usb_tx_string("goal direction: LEFT\n"); */
+    /* } */
   }
 
   if (goal != NULL) {
@@ -124,4 +134,18 @@ int estimate_puck_theta() {
     return sensor_t_r - sensor_t_l;
   }
   return 0; // shouldn't happen.
+}
+
+float translate_theta(float alpha, float beta) {
+  float theta = alpha - beta;
+  if (theta > PI) {
+    theta = -2*PI + theta;
+  } else if (theta < -PI) {
+    theta = 2*PI + theta;
+  }
+  return theta;
+}
+
+int get_goal_direction() {
+  return goal_direction;
 }

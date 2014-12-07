@@ -75,11 +75,11 @@ POINT *determine_position(unsigned int *data) {
   parsePoints(data, points);
 
   if (!find_axial_points(points, axial_points)) {
-    return create_point(0,0);
+    return NULL;
   }
   if (!find_axis_direction(axial_points,
                            find_third_point(points, axial_points))) {
-    return create_point(0,0);
+    return NULL;
   }
   theta = determine_angle(axial_points);
 

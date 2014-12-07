@@ -12,17 +12,55 @@
 
 #define RXADDRESS 84
 
-volatile int new_camera_data_flag = 0;
+volatile int camera_timer_flag = 0;
 volatile int new_packet_flag = 0;
-unsigned int blobs[12];
-/* bool have_puck = FALSE; */
+POINT *robot = NULL;
+
+void m2_init();
 
 int main(void) {
-  // set system clock to 16MHz.
+  m2_init();
+
+  while(1) {
+    update_ADC();
+    print_sensor_values();
+
+    /* if (!is_play()) { */
+    /*   set_motor_duty_cycle(0,0); */
+    /* } */
+
+    /* if (is_play() && !have_puck()) { */
+    /*   find_puck(); */
+    /* } */
+
+    /* if (camera_timer_flag) { */
+    /*   if (!set_goal() || have_puck()) { */
+    /*     robot = localize_robot(); */
+    /*   } */
+    /*   if (is_play() && set_goal() && have_puck()) { */
+    /*     drive_to_goal(robot); */
+    /*   } */
+    /*   camera_timer_flag = 0; */
+    /* } */
+
+    if (new_packet_flag) {
+      comm_handler();
+      new_packet_flag = 0;
+    }
+  }
+  return 0;
+}
+
+void m2_init() {
+    // set system clock to 16MHz.
   m_clockdivide(0);
 
   // enable global interrupts.
   sei();
+
+  // enable switch input pins.
+  clear(DDRB, 0);
+  clear(DDRB, 1);
 
   // usb data channel init.
   debug_init();
@@ -46,48 +84,21 @@ int main(void) {
   init_timer1();
 
   // rf communicaiton init.
-  /* comm_init(RXADDRESS); */
-
-  while(1) {
-    update_ADC();
-    /* print_sensor_values(); */
-    /* estimate_puck_theta(); */
-    /* find_puck(); */
-    // go_forward();
-
-    if (new_camera_data_flag) {
-      set_goal(blobs);
-    }
-    if (find_puck() && new_camera_data_flag) {
-    /* if (new_camera_data_flag) { */
-      /* m_green(TOGGLE); */
-      camera_handler(blobs);
-      new_camera_data_flag = 0;
-    }
-
-  //   if (new_packet_flag) {
-  //     m_red(TOGGLE);
-  //     comm_handler();
-  //     new_packet_flag = 0;
-  //   }
-  }
-  return 0;
+  comm_init(RXADDRESS);
 }
 
 // camera interrupt.
 ISR(TIMER3_COMPA_vect) {
-  new_camera_data_flag = 1;
+  camera_timer_flag = 1;
 }
 
-// rf data interrupt.
-/* ISR(INT2_vect){ */
-/*   new_packet_flag = 1; */
-/* } */
+//rf data interrupt.
+ISR(INT2_vect){
+  new_packet_flag = 1;
+}
 
 //adc interrupt
 ISR(ADC_vect)
 {  // this interrupt is present to clear ADCSRA: ADIF flag (in this
     // case write a logivcal one to it)
 }
-
-
