@@ -66,8 +66,8 @@ void comm_handler() {
 }
 
 bool is_play() {
-  /* return TRUE; */
-  return play;
+  return TRUE;
+  /* return play; */
 }
 void receiver_handler() {
   m_rf_read(buffer,PACKET_LENGTH);

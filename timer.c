@@ -2,7 +2,12 @@
 #include <math.h>
 #include "m_general.h"
 #include "localization.h"
+#include "debug.h"
 #include "timer.h"
+
+bool interval_running = FALSE;
+unsigned int interval_count = 0;
+unsigned int interval = 0; // unit 1ms.
 
 // motor enable pin pwm timer.
 void init_timer1()
@@ -53,7 +58,48 @@ void init_timer3() {
   // set OCR1A so that interrupt would occur at POLLING_FREQ.
   OCR3A =  timer_freq/POLLING_FREQ;
 
-  // enable interrput when timer is OCR1A
+  // enable interrput when timer is OCR3A
   set(TIMSK3,OCIE3A);
 }
 
+// multi-purpose interval timer.
+void init_timer0()
+{
+  // set prescaler to /1024
+  // timer freq = 16MHz / 1025 = 15.625kHz
+  set(TCCR0B,CS02);
+  clear(TCCR0B,CS01);
+  set(TCCR0B,CS00);
+  float timer_freq = SYSTEM_CLOCK/1024;
+
+  // set timer mode: UP to OCR0A
+  clear(TCCR0B,WGM02);
+  set(TCCR0A,WGM01);
+  clear(TCCR0A,WGM00);
+
+  // set OCR1A so that interrupt would occur at POLLING_FREQ.
+  // OCR0A = 15625 / 100 = 156
+  OCR0A =  timer_freq/INTERVAL_TICK_FREQ;
+  send_float("OCR0A", OCR0A);
+
+  // enable interrput when timer is OCR0A
+  set(TIMSK0,OCIE0A);
+}
+
+void increment_interval_count() {
+  if (interval_count == interval) {
+    interval_count = 0;
+    interval_running = FALSE;
+  } else {
+    interval_count++;
+  }
+}
+
+bool interval_timer_running() {
+  return interval_running;
+}
+
+void set_interval(unsigned int val) {
+  interval = val;
+  interval_running = TRUE;
+}

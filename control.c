@@ -19,8 +19,12 @@ float prev_theta_diff = 0;
 int goal_direction = 0;
 
 void drive_to_goal(POINT *robot) {
+  drive_to_point(robot, goal);
+}
+
+void drive_to_point(POINT *robot, POINT *p) {
   robot_goal[0] = robot;
-  robot_goal[1] = goal;
+  robot_goal[1] = p;
   goal->theta = determine_angle(robot_goal);
 
   /* theta_diff = robot->theta - goal->theta; */
@@ -77,12 +81,12 @@ int determine_goal(POINT *robot) {
     /* goal_direction = LEFT; */
 
     if (robot->x < 500) {
-      /* m_green(ON); */
-      goal = create_point(120, 330);
+      /* m_red(ON); */
+      goal = create_point(850, 420);
       goal_direction = RIGHT;
       m_usb_tx_string("goal direction: RIGHT\n");
     } else {
-      /* m_red(ON); */
+      /* m_green(ON); */
       goal = create_point(120, 330);
       goal_direction = LEFT;
       m_usb_tx_string("goal direction: LEFT\n");
@@ -156,7 +160,7 @@ void bi_color_red(int mode) {
     set(PORTB, 2);
   } else if (mode == OFF) {
     clear(PORTB, 2);
-  } else if (mode == OFF) {
+  } else if (mode == TOGGLE) {
     toggle(PORTB, 2);
   }
 }
@@ -166,8 +170,23 @@ void bi_color_blue(int mode) {
     set(PORTB, 3);
   } else if (mode == OFF) {
     clear(PORTB, 3);
-  } else if (mode == OFF) {
+  } else if (mode == TOGGLE) {
     toggle(PORTB, 3);
   }
 }
 
+POINT *right_relay;
+POINT *left_relay;
+
+POINT *get_relay_point() {
+  if (goal_direction == RIGHT) {
+    return right_relay;
+  } else {
+    return left_relay;
+  }
+}
+
+void control_init() {
+  right_relay = create_point(230, 330);
+  left_relay = create_point(780, 420);
+}

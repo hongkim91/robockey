@@ -18,5 +18,8 @@ int goal_speed(float theta);
 int get_goal_direction();
 void bi_color_red(int mode);
 void bi_color_blue(int mode);
+void drive_to_point(POINT *robot, POINT *p);
+POINT *get_relay_point();
+void control_init();
 
 #endif

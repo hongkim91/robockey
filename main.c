@@ -23,30 +23,37 @@ int main(void) {
 
   while(1) {
     update_ADC();
-    /* set_motor_duty_cycle(200,200); */
+    /* set_motor_duty_cycle(200,0); */
 
-    /* if (!is_play()) { */
-    /*   set_motor_duty_cycle(0,0); */
-    /* } */
+    if (!is_play()) {
+      set_motor_duty_cycle(0,0);
+    }
 
-    /* if (is_play() && !have_puck()) { */
-    /*   find_puck(); */
-    /* } */
+    if (is_play() && !have_puck()) {
+      find_puck();
+    }
 
-    /* if (camera_timer_flag) { */
-    /*   if (!set_goal() || have_puck()) { */
-    /*     robot = localize_robot(); */
-    /*   } */
-    /*   if (is_play() && set_goal() && have_puck()) { */
-    /*     drive_to_goal(robot); */
-    /*   } */
-    /*   camera_timer_flag = 0; */
-    /* } */
+    if (camera_timer_flag) {
+      if (!set_goal() || have_puck()) {
+        robot = localize_robot();
+      }
 
-    /* if (new_packet_flag) { */
-    /*   comm_handler(); */
-    /*   new_packet_flag = 0; */
-    /* } */
+      /* if (interval_timer_running()) { */
+      /*   robot = localize_robot(); */
+      /*   drive_to_point(robot, get_relay_point()); */
+      /*   m_green(TOGGLE); */
+      /* } else { */
+        if (is_play() && set_goal() && have_puck()) {
+          drive_to_goal(robot);
+        }
+      /* } */
+      camera_timer_flag = 0;
+    }
+
+    if (new_packet_flag) {
+      comm_handler();
+      new_packet_flag = 0;
+    }
   }
   return 0;
 }
@@ -87,6 +94,12 @@ void m2_init() {
   //motors timer
   init_timer1();
 
+  // interval timer
+  /* init_timer0(); */
+
+  // control init
+  /* control_init(); */
+
   // rf communicaiton init.
   comm_init(RXADDRESS);
 }
@@ -94,6 +107,13 @@ void m2_init() {
 // camera interrupt.
 ISR(TIMER3_COMPA_vect) {
   camera_timer_flag = 1;
+}
+
+// interval timer interrupt.
+ISR(TIMER0_COMPA_vect) {
+  if (interval_timer_running()) {
+    increment_interval_count();
+  }
 }
 
 //rf data interrupt.
