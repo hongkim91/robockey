@@ -11,6 +11,7 @@
 #include "control.h"
 
 #define RXADDRESS 84
+/* #define RXADDRESS 85 */
 
 volatile int camera_timer_flag = 0;
 volatile int new_packet_flag = 0;
@@ -23,7 +24,7 @@ int main(void) {
 
   while(1) {
     update_ADC();
-    /* set_motor_duty_cycle(200,200); */
+    set_motor_duty_cycle(200,200);
 
     /* if (!is_play()) { */
     /*   set_motor_duty_cycle(0,0); */

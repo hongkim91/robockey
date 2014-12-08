@@ -7,6 +7,7 @@
 #include "string.h"
 #include "control.h"
 #include "comm.h"
+#include "features.h"
 
 #define CHANNEL 1
 #define PACKET_LENGTH 10
@@ -66,8 +67,11 @@ void comm_handler() {
 }
 
 bool is_play() {
-  /* return TRUE; */
-  return play;
+  if (REQUIRE_COMM) {
+    return play;
+  } else {
+    return TRUE;
+  }
 }
 void receiver_handler() {
   m_rf_read(buffer,PACKET_LENGTH);

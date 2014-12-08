@@ -1,4 +1,5 @@
 #include "m_general.h"
+#include "features.h"
 #include "motor.h"
 #include "adc.h"
 #include "timer.h"
@@ -54,6 +55,11 @@ void go_forward() {
 //refB: right
 
 void set_motor_duty_cycle(int refA, int refB) {
+  /* int temp; */
+  /* temp = refA; */
+  /* refA = refB; */
+  /* refB = temp; */
+
   if (refA > 255) {
     OCR1A = 255;
     set(PORTB, 4);
@@ -98,7 +104,11 @@ void set_motor_duty_cycle(int refA, int refB) {
 /* } */
 
 bool have_puck() {
-  return !check(PINB, 0) || !check(PINB, 1);
+  if (FIND_PUCK) {
+    return !check(PINB, 0) || !check(PINB, 1);
+  } else {
+    return TRUE;
+  }
 }
 
 void find_puck() {

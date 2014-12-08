@@ -156,7 +156,7 @@ void bi_color_red(int mode) {
     set(PORTB, 2);
   } else if (mode == OFF) {
     clear(PORTB, 2);
-  } else if (mode == OFF) {
+  } else if (mode == TOGGLE) {
     toggle(PORTB, 2);
   }
 }
@@ -166,7 +166,7 @@ void bi_color_blue(int mode) {
     set(PORTB, 3);
   } else if (mode == OFF) {
     clear(PORTB, 3);
-  } else if (mode == OFF) {
+  } else if (mode == TOGGLE) {
     toggle(PORTB, 3);
   }
 }

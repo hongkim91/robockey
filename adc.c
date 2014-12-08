@@ -86,7 +86,7 @@ void update_ADC (void)
     ADC_F6();
     sensor_values[4] = ADC;
 
-    print_sensor_values();
+    /* print_sensor_values(); */
     offset_sensor_values();
 }
 

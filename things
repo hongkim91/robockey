@@ -8,3 +8,6 @@ NEED TO IMPROVE
 - Fix second robot
 - Figure out why it occasionally moves backwards.
 - Perfect the corner turn goal.
+
+
+COMMTEST should work without needing localization.
