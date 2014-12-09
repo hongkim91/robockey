@@ -29,7 +29,7 @@ void send_hex(char *label, char value) {
 }
 
 void send_point(int x, int y) {
-  sprintf(buf, "x: %d, y: %d\n", x, y);
+  sprintf(buf, "%d \t %d\n", x, y);
   send_buf(buf);
 }
 

@@ -46,19 +46,16 @@ void stop() {
     OCR1B = 0;
 }
 
-void go_forward() {
-  set(PORTB, 4);
-  set(PORTC, 6);
-}
-
 //refA: left
 //refB: right
-
 void set_motor_duty_cycle(int refA, int refB) {
-  /* int temp; */
-  /* temp = refA; */
-  /* refA = refB; */
-  /* refB = temp; */
+  if (TEST_GO_FORWARD) {
+    refA = 200;
+    refB = 200;
+  } else if (TEST_GO_BACKWARD) {
+    refA = -200;
+    refB = -200;
+  }
 
   if (refA > 255) {
     OCR1A = 255;
@@ -73,6 +70,7 @@ void set_motor_duty_cycle(int refA, int refB) {
     OCR1A = refA;
     set(PORTB, 4);
   }
+
   if (refB > 255) {
     OCR1B = 255;
     set(PORTC, 6);
@@ -93,23 +91,26 @@ void set_motor_duty_cycle(int refA, int refB) {
   /* send_float("direction right", check(PINC, 6)); */
 }
 
-/* bool have_puck() { */
-/*    // SENSOR ON INDEX 0 IS ASSUMED MIDDLE. */
-/*   int sensor_middle = sensor_values[0]; */
-/*   if (sensor_middle>=1010) { */
-/*     return TRUE; */
-/*   } else { */
-/*     return FALSE; */
-/*   } */
-/* } */
-
 bool have_puck() {
-  if (FIND_PUCK) {
-    return !check(PINB, 0) || !check(PINB, 1);
-  } else {
+  if (!FIND_PUCK) {
     return TRUE;
   }
+  // SENSOR ON INDEX 0 IS ASSUMED MIDDLE.
+  int sensor_middle = sensor_values[0];
+  if (sensor_middle>=1010) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
+
+/* bool have_puck() { */
+/*   if (FIND_PUCK) { */
+/*     return !check(PINB, 0) || !check(PINB, 1); */
+/*   } else { */
+/*     return TRUE; */
+/*   } */
+/* } */
 
 void find_puck() {
   float KP = .1;
@@ -132,15 +133,16 @@ void find_puck() {
   int tgt_duty_cycle_L = speed_val + turn;
   int tgt_duty_cycle_R = speed_val - turn;
 
-  m_usb_tx_string("--------------------FIND PUCK --------------------\n");
   set_motor_duty_cycle(tgt_duty_cycle_L, tgt_duty_cycle_R);
 
-  send_float("theta_est", theta_est);
-  send_float("turn", turn);
-  send_float("speed", speed_val);
-
-  send_float("tgt_duty_cycle_R", tgt_duty_cycle_R);
-  send_float("tgt_duty_cycle_L", tgt_duty_cycle_L);
+  if (!TEST_LOCALIZATION_CENTER) {
+    m_usb_tx_string("--------------------FIND PUCK --------------------\n");
+    send_float("theta_est", theta_est);
+    send_float("turn", turn);
+    send_float("speed", speed_val);
+    send_float("tgt_duty_cycle_R", tgt_duty_cycle_R);
+    send_float("tgt_duty_cycle_L", tgt_duty_cycle_L);
+  }
 }
 
 int speed(int theta_est) {

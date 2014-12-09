@@ -20,10 +20,6 @@ void init_timer1()
   clear(TCCR1A,WGM11);
   set(TCCR1A,WGM10);
 
-  // set OCR1A and OCR1B ceilings
-  /* OCR1A = 200; */
-  /* OCR1B = 200; */
-
   // OCR1A output compare: B5 clear at OCR1A, set at rollover
   set(TCCR1A, COM1A1);
   clear(TCCR1A, COM1A0);

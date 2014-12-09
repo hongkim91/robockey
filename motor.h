@@ -7,8 +7,6 @@
 void motor_init();
 void rotate(int direction);
 void stop();
-void go();
-void go_forward();
 bool have_puck();
 void find_puck();
 void set_motor_duty_cycle(int refA, int refB);

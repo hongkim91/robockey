@@ -10,6 +10,7 @@
 #include "m_general.h"
 #include "adc.h"
 #include "debug.h"
+#include "features.h"
 #include <stdio.h>
 
 #define BETA 0.0
@@ -86,7 +87,9 @@ void update_ADC (void)
     ADC_F6();
     sensor_values[4] = ADC;
 
-    /* print_sensor_values(); */
+    if (TEST_SENSORS) {
+      print_sensor_values();
+    }
     offset_sensor_values();
 }
 

@@ -9,6 +9,8 @@
 #include "localization.h"
 #include "adc.h"
 #include "control.h"
+#include "features.h"
+#include "m_wii.h"
 
 #define RXADDRESS 84
 /* #define RXADDRESS 85 */
@@ -19,41 +21,54 @@ POINT *robot = NULL;
 
 void m2_init();
 
+void init_features() {
+  FIND_PUCK = 0;
+  REQUIRE_COMM = 0;
+  FIND_GOAL = 0;
+
+  TEST_SENSORS = 0;
+  TEST_GO_FORWARD = 0;
+  TEST_GO_BACKWARD = 0;
+  TEST_LOCALIZATION_CENTER = 0;
+}
+
 int main(void) {
   m2_init();
 
   while(1) {
     update_ADC();
-    set_motor_duty_cycle(200,200);
 
-    /* if (!is_play()) { */
-    /*   set_motor_duty_cycle(0,0); */
-    /* } */
+    if (!is_play()) {
+      set_motor_duty_cycle(0,0);
+    }
 
-    /* if (is_play() && !have_puck()) { */
-    /*   find_puck(); */
-    /* } */
+    if (is_play() && !have_puck()) {
+      find_puck();
+    }
 
-    /* if (camera_timer_flag) { */
-    /*   if (!set_goal() || have_puck()) { */
-    /*     robot = localize_robot(); */
-    /*   } */
-    /*   if (is_play() && set_goal() && have_puck()) { */
-    /*     drive_to_goal(robot); */
-    /*   } */
-    /*   camera_timer_flag = 0; */
-    /* } */
+    if (camera_timer_flag) {
+      if (!set_goal() || have_puck()) {
+        robot = localize_robot();
+      }
+      if (is_play() && set_goal() && have_puck() && FIND_GOAL) {
+        drive_to_goal(robot);
+      }
+      camera_timer_flag = 0;
+    }
 
-    /* if (new_packet_flag) { */
-    /*   comm_handler(); */
-    /*   new_packet_flag = 0; */
-    /* } */
+    if (new_packet_flag) {
+      comm_handler();
+      new_packet_flag = 0;
+    }
   }
   return 0;
 }
 
 void m2_init() {
-    // set system clock to 16MHz.
+  // initialize feature flags.
+  init_features();
+
+  // set system clock to 16MHz.
   m_clockdivide(0);
 
   // enable global interrupts.
@@ -85,11 +100,14 @@ void m2_init() {
   // mWii init.
   camera_init();
 
-  //motors timer
-  init_timer1();
-
   // rf communicaiton init.
   comm_init(RXADDRESS);
+
+  if (TEST_GO_FORWARD) {
+    set_motor_duty_cycle(200, 200);
+  } else if (TEST_GO_BACKWARD) {
+    set_motor_duty_cycle(-200, -200);
+  }
 }
 
 // camera interrupt.
@@ -107,3 +125,4 @@ ISR(ADC_vect)
 {  // this interrupt is present to clear ADCSRA: ADIF flag (in this
     // case write a logivcal one to it)
 }
+

@@ -3,11 +3,13 @@
 #include <string.h>
 #include <math.h>
 #include "localization.h"
+#include "debug.h"
+#include "features.h"
 
-#define RINK_PIXEL_WIDTH 1024
-#define RINK_PIXEL_HEIGHT 768
-#define CENTER_X (RINK_PIXEL_WIDTH/2)
-#define CENTER_Y (RINK_PIXEL_HEIGHT/2)
+#define RINK_PIXEL_WIDTH 1024   // 512
+#define RINK_PIXEL_HEIGHT 768   // 384
+#define CENTER_X 512
+#define CENTER_Y 450
 
 int initialized = 0;
 POINT *axial_points[2];
@@ -82,6 +84,15 @@ POINT *determine_position(unsigned int *data) {
     return NULL;
   }
   theta = determine_angle(axial_points);
+
+  if (TEST_LOCALIZATION_CENTER) {
+    while(!m_usb_rx_available()); //wait for an indication from the computer
+    m_usb_rx_char();  	          //grab the computer packet
+    m_usb_rx_flush();  		  //clear buffer
+    POINT *p1 = axial_points[0];
+    POINT *p2 = axial_points[0];
+    send_point((p1->x+p2->x)/2, (p1->y+p1->y)/2);
+  }
 
   FPOINT *rp1 = rotate_point(axial_points[0], theta);
   FPOINT *rp2 = rotate_point(axial_points[1], theta);

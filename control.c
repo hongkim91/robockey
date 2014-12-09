@@ -42,7 +42,6 @@ void drive_to_goal(POINT *robot) {
   m_usb_tx_string("--------------------FIND GOAL--------------------\n");
   set_motor_duty_cycle(tgt_duty_cycle_L, tgt_duty_cycle_R);
 
-  send_float("sensor_middle", sensor_values[0]);
   send_float("robot->theta", robot->theta * 57.3);
   send_float("goal->theta", goal->theta * 57.3);
   send_float("theta_diff", theta_diff * 57.3);
@@ -78,12 +77,12 @@ int determine_goal(POINT *robot) {
 
     if (robot->x < 500) {
       /* m_green(ON); */
-      goal = create_point(120, 330);
+      goal = create_point(860, 420);
       goal_direction = RIGHT;
       m_usb_tx_string("goal direction: RIGHT\n");
     } else {
       /* m_red(ON); */
-      goal = create_point(120, 330);
+      goal = create_point(100, 450);
       goal_direction = LEFT;
       m_usb_tx_string("goal direction: LEFT\n");
     }

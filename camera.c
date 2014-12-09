@@ -4,6 +4,7 @@
 #include "debug.h"
 #include "localization.h"
 #include "control.h"
+#include "features.h"
 
 unsigned int blobs[12];
 char buf[100];
@@ -32,8 +33,10 @@ POINT *localize_robot() {
   }
 
   if (curr_robot != NULL) {
-    sprintf(buf, "x: %d, y: %d\n", curr_robot->x, curr_robot->y);
-    send_buf(buf);
+    if (!TEST_LOCALIZATION_CENTER) {
+      sprintf(buf, "x: %d, y: %d\n", curr_robot->x, curr_robot->y);
+      send_buf(buf);
+    }
   } else {
     m_usb_tx_string("No point for curr_robot has been set yet!\n");
   }
