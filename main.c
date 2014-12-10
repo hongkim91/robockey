@@ -34,6 +34,7 @@ void init_robot_and_features() {
   TEST_LOCALIZATION_CENTER = 0;
   TEST_STAR_READING = 0;
   TEST_HAVE_PUCK = 0;
+  TEST_PUCK_SENSOR = 0;
 }
 
 int main(void) {

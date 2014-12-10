@@ -21,7 +21,7 @@ int i; //variable for for loop
 
 char rx_buffer;
 
-void init_ADC (void)
+void init_ADC()
 {
     //set voltage reference of ADC  to AREF
     clear(ADMUX,REFS1);
@@ -65,7 +65,7 @@ void init_ADC (void)
 
 }
 
-void update_ADC (void)
+void update_ADC()
 {
     //read ADC value from F0
     ADC_F0();
@@ -87,13 +87,17 @@ void update_ADC (void)
     ADC_F6();
     sensor_values[4] = ADC;
 
+    //read ADC value from F7
+    ADC_F7();
+    sensor_values[5] = ADC;
+
     if (TEST_SENSORS) {
       print_sensor_values();
     }
     offset_sensor_values();
 }
 
-void ADC_F0 (void)
+void ADC_F0()
 { //disable ADC subsystem - ensures good behavior
     clear(ADCSRA,ADEN);
 
@@ -113,7 +117,7 @@ void ADC_F0 (void)
     while(!check(ADCSRA,ADIF));
 }
 
-void ADC_F1 (void)
+void ADC_F1()
 { //disable ADC subsystem - ensures good behavior
     clear(ADCSRA,ADEN);
 
@@ -132,7 +136,7 @@ void ADC_F1 (void)
     while(!check(ADCSRA,ADIF));
 }
 
-void ADC_F4 (void)
+void ADC_F4()
 { //disable ADC subsystem - ensures good behavior
     clear(ADCSRA,ADEN);
 
@@ -150,7 +154,7 @@ void ADC_F4 (void)
     while(!check(ADCSRA,ADIF));
 }
 
-void ADC_F5(void)
+void ADC_F5()
 { //disable ADC subsystem - ensures good behavior
     clear(ADCSRA,ADEN);
 
@@ -168,7 +172,7 @@ void ADC_F5(void)
     while(!check(ADCSRA,ADIF));
 }
 
-void ADC_F6(void)
+void ADC_F6()
 { //disable ADC subsystem - ensures good behavior
     clear(ADCSRA,ADEN);
 
@@ -186,7 +190,25 @@ void ADC_F6(void)
     while(!check(ADCSRA,ADIF));
 }
 
-void matlab(void)
+void ADC_F7()
+{ //disable ADC subsystem - ensures good behavior
+    clear(ADCSRA,ADEN);
+
+    //enable F7 as input
+    clear(ADCSRB,MUX5);
+    set(ADMUX,MUX2);
+    set(ADMUX,MUX1);
+    set(ADMUX, MUX0);
+
+    //enable ADC subsystem
+    set(ADCSRA,ADEN);//begin conversion
+    set(ADCSRA,ADSC);
+
+    //check if flag is set
+    while(!check(ADCSRA,ADIF));
+}
+
+void matlab()
 {
   while(!m_usb_rx_available()); {     //wait for an indication from the computer
     rx_buffer = m_usb_rx_char();  }  //grab the computer packet
