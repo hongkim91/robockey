@@ -24,9 +24,9 @@ void init_robot_and_features() {
   init_constants(ROBOT_NAME);
 
   // FLAGS DECIDE ALL BEHAVIOR.
-  FIND_PUCK = 1;
-  FIND_GOAL = 1;
-  REQUIRE_COMM = 1;
+  FIND_PUCK = 0;
+  FIND_GOAL = 0;
+  REQUIRE_COMM = 0;
 
   TEST_SENSORS = 0;
   TEST_GO_FORWARD = 0;

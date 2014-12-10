@@ -12,33 +12,15 @@ bool first_run = FALSE;
 int prev_theta_est = 0;
 int theta_est_cutoff = 0;
 
-int puck_sensor(int robot_name) {
-  if (robot_name == UGLY) {
-    return sensor_values[0];
-  } else {
-    // SENSOR ON INDEX 5 IS ASSUMED TOPBOARD.
-    return sensor_values[5];
-  }
-}
-
 bool have_puck() {
   if (TEST_PUCK_SENSOR) {
-    send_float("puck_sensor", puck_sensor(ROBOT_NAME));
+    send_float("puck_sensor", sensor_values[5]);
   }
-
-  if (ROBOT_NAME == UGLY) {
-    // SENSOR ON INDEX 0 IS ASSUMED MIDDLE.
-    if (puck_sensor(ROBOT_NAME) >= 1010) {
-      return TRUE;
-    } else {
-      return FALSE;
-    }
+  // SENSOR ON INDEX 5 IS ASSUMED TOPBOARD.
+  if (sensor_values[5] >= 570) {
+    return TRUE;
   } else {
-    if (puck_sensor(ROBOT_NAME) >= 800) {
-      return TRUE;
-    } else {
-      return FALSE;
-    }
+    return FALSE;
   }
 }
 
