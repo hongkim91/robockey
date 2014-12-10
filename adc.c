@@ -261,4 +261,7 @@ void offset_sensor_values() {
   for (i=1; i<5; i++) {
     sensor_values[i] = raw_sensor_values[i] - avg_raw_sensor_value;
   }
+  sensor_values[0] = raw_sensor_values[0];
+  sensor_values[5] = raw_sensor_values[5];
+
 }

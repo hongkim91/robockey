@@ -15,6 +15,8 @@ float PUCK_KP;
 float PUCK_KD;
 int CENTER_X;
 int CENTER_Y;
+int TOP_WALL_Y_CUTOFF;
+int BOTTOM_WALL_Y_CUTOFF;
 
 void init_constants();
 

@@ -29,6 +29,7 @@ void init_robot_and_features() {
   FIND_PUCK = 0;
   FIND_GOAL = 0;
   REQUIRE_COMM = 0;
+  STOP_OWN_GOAL = 0;
 
   TEST_SENSORS = 0;
   TEST_GO_FORWARD = 0;
@@ -37,6 +38,7 @@ void init_robot_and_features() {
   TEST_STAR_READING = 0;
   TEST_HAVE_PUCK = 0;
   TEST_PUCK_SENSOR = 0;
+  TEST_WALL_TROUBLE = 0;
 }
 
 int main(void) {
@@ -52,6 +54,11 @@ int main(void) {
       new_packet_flag = 0;
     }
 
+    if (camera_timer_flag) {
+      robot = localize_robot();
+      camera_timer_flag = 0;
+    }
+
     set_goal();
 
     if (!is_play()) {
@@ -61,21 +68,14 @@ int main(void) {
 
     update_ADC();
     if (!have_puck()) {
-      find_puck();
+      find_puck(robot);
     }
 
-    if (camera_timer_flag) {
-      if (FIND_PUCK && !have_puck()) continue;
-
-      robot = localize_robot();
-      if (headed_own_goal(robot)) {
-        stop();
-        continue;
-      }
+    if (STOP_OWN_GOAL && headed_own_goal(robot)) {
+      stop();
+    } else {
       drive_to_goal(robot);
-      camera_timer_flag = 0;
     }
-
   }
   return 0;
 }

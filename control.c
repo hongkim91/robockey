@@ -179,3 +179,30 @@ bool headed_own_goal(POINT *robot) {
     return FALSE;
   }
 }
+
+bool near_wall(POINT *robot) {
+  if (robot == NULL) {
+    return FALSE;
+  }
+
+  return (robot->y > TOP_WALL_Y_CUTOFF || robot->y < BOTTOM_WALL_Y_CUTOFF);
+}
+
+bool wall_trouble(POINT *robot) {
+  if (robot == NULL) {
+    return FALSE;
+  }
+
+  if (goal_direction == LEFT) {
+    return ((robot->y > TOP_WALL_Y_CUTOFF &&
+             robot->theta < 0 && robot->theta > -PI/3) ||
+            (robot->y < BOTTOM_WALL_Y_CUTOFF && robot->theta < -2*PI/3));
+  } else if (goal_direction == RIGHT) {
+    return ((robot->y > TOP_WALL_Y_CUTOFF &&
+             robot->theta > 0 && robot->theta < PI/3) ||
+            (robot->y < BOTTOM_WALL_Y_CUTOFF && robot->theta > 2*PI/3));
+  } else {
+    /* m_usb_tx_string("GOAL DIRECTION NOT SET\n"); */
+    return FALSE;
+  }
+}

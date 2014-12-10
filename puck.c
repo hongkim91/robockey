@@ -24,7 +24,7 @@ bool have_puck() {
   }
 }
 
-void find_puck() {
+void find_puck(POINT *robot) {
   if (!FIND_PUCK) return;
 
   int theta_est = estimate_puck_theta();
@@ -35,7 +35,7 @@ void find_puck() {
   }
 
   /* int turn = PUCK_KP * theta_est + PUCK_KD *(theta_est - prev_theta_est); */
-  int turn = puck_turn(theta_est);
+  int turn = puck_turn(theta_est, robot);
   prev_theta_est = theta_est;
   int speed_val = puck_speed(theta_est);
   if (speed_val > PUCK_SPEED_LIMIT - abs(turn)) {
@@ -47,9 +47,13 @@ void find_puck() {
 
   set_motor_duty_cycle(tgt_duty_cycle_L, tgt_duty_cycle_R);
 
-  print_sensor_values();
   if (!TEST_LOCALIZATION_CENTER) {
     m_usb_tx_string("--------------------FIND PUCK --------------------\n");
+    print_raw_sensor_values();
+    print_sensor_values();
+    if (robot != NULL) {
+      send_float("robot->theta", robot->theta * 57.3);
+    }
     send_float("theta_est", theta_est);
     send_float("turn", turn);
     send_float("speed", speed_val);
@@ -58,27 +62,38 @@ void find_puck() {
   }
 }
 
-int puck_turn(int theta_est) {
+int puck_turn(int theta_est, POINT *robot) {
   int sensor_b_l = sensor_values[2];
   int sensor_t_l = sensor_values[1];
   int sensor_t_r = sensor_values[4];
   int sensor_b_r = sensor_values[3];
 
   float KP = PUCK_KP;
+  float KD = PUCK_KD;
 
-  switch (determine_quadrant()) {
-  case T_R:
-    if (sensor_t_l < sensor_b_r) {
-      KP = 2 * PUCK_KP;
+  if (wall_trouble(robot)) {
+    switch (determine_quadrant()) {
+    case T_R:
+      if (sensor_t_l < sensor_b_r) {
+        KP = 8 * PUCK_KP;
+        KD = 3 * PUCK_KD;
+      } else {
+        KP = 4 * PUCK_KP;
+        KD = 3 * PUCK_KD;
+      }
+      break;
+    case T_L:
+      if (sensor_t_r < sensor_b_l) {
+        KP = 8 * PUCK_KP;
+        KD = 3 * PUCK_KD;
+      } else {
+        KP = 4 * PUCK_KP;
+        KD = 3 * PUCK_KD;
+      }
+      break;
     }
-    break;
-  case T_L:
-    if (sensor_t_r < sensor_b_l) {
-      KP = 2 * PUCK_KP;
-    }
-    break;
   }
-  return KP * theta_est + PUCK_KD * (theta_est - prev_theta_est);
+  return KP * theta_est + KD * (theta_est - prev_theta_est);
 }
 
 int puck_speed(int theta_est) {

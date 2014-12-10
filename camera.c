@@ -45,6 +45,13 @@ POINT *localize_robot() {
       sprintf(buf, "x: %d, y: %d\n", curr_robot->x, curr_robot->y);
       send_buf(buf);
     }
+    if (TEST_WALL_TROUBLE) {
+      if (wall_trouble(curr_robot)) {
+        bi_color_red(ON);
+      } else {
+        bi_color_red(OFF);
+      }
+    }
   } else {
     m_usb_tx_string("No point for curr_robot has been set yet!\n");
   }
@@ -55,7 +62,6 @@ bool set_goal() {
   if (goal_set == TRUE) {
     return TRUE;
   }
-  attempt_localization();
 
   if (curr_robot != NULL) {
     goal_set = determine_goal(curr_robot);

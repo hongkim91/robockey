@@ -21,5 +21,7 @@ void bi_color_red(int mode);
 void bi_color_blue(int mode);
 void light_up_with_puck();
 bool headed_own_goal(POINT *robot);
+bool near_wall(POINT *robot);
+bool wall_trouble(POINT *robot);
 
 #endif
