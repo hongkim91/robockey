@@ -18,5 +18,6 @@ int goal_speed(float theta);
 int get_goal_direction();
 void bi_color_red(int mode);
 void bi_color_blue(int mode);
+void light_up_with_puck();
 
 #endif

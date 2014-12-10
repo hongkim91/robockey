@@ -6,11 +6,10 @@
 #include "camera.h"
 #include "debug.h"
 #include "motor.h"
-#include "localization.h"
 #include "adc.h"
 #include "control.h"
 #include "features.h"
-#include "m_wii.h"
+#include "puck.h"
 
 #define RXADDRESS 84
 /* #define RXADDRESS 85 */
@@ -30,36 +29,45 @@ void init_features() {
   TEST_GO_FORWARD = 0;
   TEST_GO_BACKWARD = 0;
   TEST_LOCALIZATION_CENTER = 0;
+  TEST_STAR_READING = 0;
+  TEST_HAVE_PUCK = 0;
 }
 
 int main(void) {
   m2_init();
 
   while(1) {
-    update_ADC();
-
-    if (!is_play()) {
-      set_motor_duty_cycle(0,0);
-    }
-
-    if (is_play() && !have_puck()) {
-      find_puck();
-    }
-
-    if (camera_timer_flag) {
-      if (!set_goal() || have_puck()) {
-        robot = localize_robot();
-      }
-      if (is_play() && set_goal() && have_puck() && FIND_GOAL) {
-        drive_to_goal(robot);
-      }
-      camera_timer_flag = 0;
+    if (TEST_HAVE_PUCK) {
+      light_up_with_puck();
     }
 
     if (new_packet_flag) {
       comm_handler();
       new_packet_flag = 0;
     }
+
+    set_goal();
+
+    if (!is_play()) {
+      stop();
+      continue;
+    }
+
+    update_ADC();
+    if (!have_puck()) {
+      find_puck();
+    }
+
+    if (camera_timer_flag) {
+      if (FIND_PUCK && !have_puck()) continue;
+
+      robot = localize_robot();
+      if (FIND_GOAL) {
+        drive_to_goal(robot);
+      }
+      camera_timer_flag = 0;
+    }
+
   }
   return 0;
 }

@@ -1,5 +1,5 @@
-#include "debug.h"
 #include "localization.h"
+#include "debug.h"
 #include "motor.h"
 #include "adc.h"
 #include "timer.h"
@@ -169,4 +169,14 @@ void bi_color_blue(int mode) {
     toggle(PORTB, 3);
   }
 }
+
+void light_up_with_puck() {
+  if (have_puck()) {
+    bi_color_red(ON);
+  } else {
+    bi_color_red(OFF);
+  }
+}
+
+
 

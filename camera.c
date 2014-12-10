@@ -17,9 +17,11 @@ void camera_init() {
   }
 }
 
-POINT *localize_robot() {
+void attempt_localization() {
   if (m_wii_read(blobs)) {
-    /* send_blobs(blobs); */
+    if (TEST_STAR_READING) {
+      send_blobs(blobs);
+    }
   } else {
     m_usb_tx_string("failed reading from mWii\n");
   }
@@ -31,6 +33,10 @@ POINT *localize_robot() {
     }
     curr_robot = new_robot;
   }
+}
+
+POINT *localize_robot() {
+  attempt_localization();
 
   if (curr_robot != NULL) {
     if (!TEST_LOCALIZATION_CENTER) {
@@ -47,6 +53,7 @@ bool set_goal() {
   if (goal_set == TRUE) {
     return TRUE;
   }
+  attempt_localization();
 
   if (curr_robot != NULL) {
     goal_set = determine_goal(curr_robot);
