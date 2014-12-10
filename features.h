@@ -1,6 +1,7 @@
 #ifndef features__
 #define features__
 
+int LOCALIZATION;
 int FIND_PUCK;
 int FIND_GOAL;
 int REQUIRE_COMM;

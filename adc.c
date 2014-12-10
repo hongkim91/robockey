@@ -223,8 +223,8 @@ void matlab()
 char buf[100];
 void print_sensor_values()
 {
-  sprintf(buf, "%3d %3d %3d %3d %3d\n", sensor_values[2], sensor_values[1],
-          sensor_values[0], sensor_values[4], sensor_values[3]);
+  sprintf(buf, "%3d %3d %3d %3d %3d     %3d\n", sensor_values[2], sensor_values[1],
+          sensor_values[0], sensor_values[4], sensor_values[3], sensor_values[5]);
   send_buf(buf);
 }
 

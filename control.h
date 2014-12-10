@@ -1,6 +1,7 @@
 #ifndef control__
 #define control__
 
+#define NOTSET 0
 #define RIGHT 1
 #define LEFT 2
 
@@ -19,5 +20,6 @@ int get_goal_direction();
 void bi_color_red(int mode);
 void bi_color_blue(int mode);
 void light_up_with_puck();
+bool headed_own_goal(POINT *robot);
 
 #endif

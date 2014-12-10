@@ -34,7 +34,8 @@ void find_puck() {
     first_run = TRUE;
   }
 
-  int turn = PUCK_KP * theta_est + PUCK_KD *(theta_est - prev_theta_est);
+  /* int turn = PUCK_KP * theta_est + PUCK_KD *(theta_est - prev_theta_est); */
+  int turn = puck_turn(theta_est);
   prev_theta_est = theta_est;
   int speed_val = puck_speed(theta_est);
   if (speed_val > PUCK_SPEED_LIMIT - abs(turn)) {
@@ -46,6 +47,7 @@ void find_puck() {
 
   set_motor_duty_cycle(tgt_duty_cycle_L, tgt_duty_cycle_R);
 
+  print_sensor_values();
   if (!TEST_LOCALIZATION_CENTER) {
     m_usb_tx_string("--------------------FIND PUCK --------------------\n");
     send_float("theta_est", theta_est);
@@ -54,6 +56,29 @@ void find_puck() {
     send_float("tgt_duty_cycle_R", tgt_duty_cycle_R);
     send_float("tgt_duty_cycle_L", tgt_duty_cycle_L);
   }
+}
+
+int puck_turn(int theta_est) {
+  int sensor_b_l = sensor_values[2];
+  int sensor_t_l = sensor_values[1];
+  int sensor_t_r = sensor_values[4];
+  int sensor_b_r = sensor_values[3];
+
+  float KP = PUCK_KP;
+
+  switch (determine_quadrant()) {
+  case T_R:
+    if (sensor_t_l < sensor_b_r) {
+      KP = 2 * PUCK_KP;
+    }
+    break;
+  case T_L:
+    if (sensor_t_r < sensor_b_l) {
+      KP = 2 * PUCK_KP;
+    }
+    break;
+  }
+  return KP * theta_est + PUCK_KD * (theta_est - prev_theta_est);
 }
 
 int puck_speed(int theta_est) {

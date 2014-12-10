@@ -20,10 +20,12 @@ void m2_init();
 
 void init_robot_and_features() {
   // ROBOT_NAME DETERMINES ALL ROBOT SPECIFIC CONSTANTS.
-  ROBOT_NAME = UGLY;
+  /* ROBOT_NAME = UGLY; */
+  ROBOT_NAME = HOPE;
   init_constants(ROBOT_NAME);
 
   // FLAGS DECIDE ALL BEHAVIOR.
+  LOCALIZATION = 0;
   FIND_PUCK = 0;
   FIND_GOAL = 0;
   REQUIRE_COMM = 0;
@@ -66,6 +68,10 @@ int main(void) {
       if (FIND_PUCK && !have_puck()) continue;
 
       robot = localize_robot();
+      if (headed_own_goal(robot)) {
+        stop();
+        continue;
+      }
       drive_to_goal(robot);
       camera_timer_flag = 0;
     }

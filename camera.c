@@ -36,6 +36,8 @@ void attempt_localization() {
 }
 
 POINT *localize_robot() {
+  if (!LOCALIZATION) return NULL;
+
   attempt_localization();
 
   if (curr_robot != NULL) {

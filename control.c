@@ -9,11 +9,12 @@
 #include "puck.h"
 
 #define PI 3.145
+#define MID_X 500
 
 POINT *goal = NULL;
 POINT *robot_goal[2];
 float prev_theta_diff = 0;
-int goal_direction = 0;
+int goal_direction = NOTSET;
 
 void drive_to_goal(POINT *robot) {
   if (!FIND_GOAL) return;
@@ -65,7 +66,7 @@ int goal_speed(float theta) {
 
 int determine_goal(POINT *robot) {
   if (goal == NULL) {
-    if (robot->x < 500) {
+    if (robot->x < MID_X) {
       /* m_green(ON); */
       goal = create_point(860, 420);
       goal_direction = RIGHT;
@@ -165,5 +166,16 @@ void light_up_with_puck() {
     bi_color_red(ON);
   } else {
     bi_color_red(OFF);
+  }
+}
+
+bool headed_own_goal(POINT *robot) {
+  if (goal_direction == LEFT) {
+    return robot->x > MID_X && robot->theta > 0;
+  } else if (goal_direction == RIGHT) {
+    return robot->x < MID_X && robot->theta < 0;
+  } else {
+    /* m_usb_tx_string("GOAL DIRECTION NOT SET\n"); */
+    return FALSE;
   }
 }
