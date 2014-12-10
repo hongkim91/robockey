@@ -69,32 +69,32 @@ void update_ADC()
 {
     //read ADC value from F0
     ADC_F0();
-    sensor_values[0] = ADC;
+    raw_sensor_values[0] = ADC;
 
     //read ADC value from F1
     ADC_F1();
-    sensor_values[1] = ADC;
+    raw_sensor_values[1] = ADC;
 
     //read ADC value from F4
     ADC_F4();
-    sensor_values[2] = ADC;
+    raw_sensor_values[2] = ADC;
 
     //read ADC value from F5
     ADC_F5();
-    sensor_values[3] = ADC;
+    raw_sensor_values[3] = ADC;
 
     //read ADC value from F6
     ADC_F6();
-    sensor_values[4] = ADC;
+    raw_sensor_values[4] = ADC;
 
     //read ADC value from F7
     ADC_F7();
-    sensor_values[5] = ADC;
+    raw_sensor_values[5] = ADC;
 
-    if (TEST_SENSORS) {
-      print_sensor_values();
-    }
     offset_sensor_values();
+    if (TEST_SENSORS) {
+      print_raw_sensor_values();
+    }
 }
 
 void ADC_F0()
@@ -228,29 +228,37 @@ void print_sensor_values()
   send_buf(buf);
 }
 
+void print_raw_sensor_values()
+{
+  sprintf(buf, "%3d %3d %3d %3d %3d     %3d\n", raw_sensor_values[2],
+          raw_sensor_values[1], raw_sensor_values[0], raw_sensor_values[4],
+          raw_sensor_values[3], raw_sensor_values[5]);
+  send_buf(buf);
+}
+
 void offset_sensor_values() {
   int i;
   int lowest_idx1 = 0;
   int lowest_idx2 = 0;
-  int avg_sensor_value;
+  int avg_raw_sensor_value;
 
   for (i=1; i<5; i++) {
     if (lowest_idx1 == 0 ||
-        sensor_values[i] < sensor_values[lowest_idx1]) {
+        raw_sensor_values[i] < raw_sensor_values[lowest_idx1]) {
       lowest_idx1 = i;
     }
   }
   for (i=1; i<5; i++) {
     if (i == lowest_idx1) continue;
     if (lowest_idx2 == 0 ||
-        sensor_values[i] < sensor_values[lowest_idx2]) {
+        raw_sensor_values[i] < raw_sensor_values[lowest_idx2]) {
       lowest_idx2 = i;
     }
   }
-  avg_sensor_value = (sensor_values[lowest_idx1] +
-                      sensor_values[lowest_idx2])/2;
+  avg_raw_sensor_value = (raw_sensor_values[lowest_idx1] +
+                      raw_sensor_values[lowest_idx2])/2;
 
   for (i=1; i<5; i++) {
-    sensor_values[i] -= avg_sensor_value;
+    sensor_values[i] = raw_sensor_values[i] - avg_raw_sensor_value;
   }
 }
