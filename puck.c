@@ -1,12 +1,12 @@
 #include <math.h>
+#include "constants.h"
+#include "features.h"
 #include "m_general.h"
 #include "motor.h"
-#include "features.h"
 #include "adc.h"
 #include "debug.h"
 #include "control.h"
-
-#define PUCK_SPEED_LIMIT 190.0
+#include "puck.h"
 
 bool first_run = FALSE;
 int prev_theta_est = 0;
@@ -25,9 +25,6 @@ bool have_puck() {
 void find_puck() {
   if (!FIND_PUCK) return;
 
-  float KP = .1;
-  float KD = 1;
-
   int theta_est = estimate_puck_theta();
   if (!first_run) {
     prev_theta_est = theta_est;
@@ -35,9 +32,9 @@ void find_puck() {
     first_run = TRUE;
   }
 
-  int turn = KP * theta_est + KD *(theta_est - prev_theta_est);
+  int turn = PUCK_KP * theta_est + PUCK_KD *(theta_est - prev_theta_est);
   prev_theta_est = theta_est;
-  int speed_val = speed(theta_est);
+  int speed_val = puck_speed(theta_est);
   if (speed_val > PUCK_SPEED_LIMIT - abs(turn)) {
     speed_val = PUCK_SPEED_LIMIT - abs(turn);
   }
@@ -57,7 +54,7 @@ void find_puck() {
   }
 }
 
-int speed(int theta_est) {
+int puck_speed(int theta_est) {
   int sensor_b_l = sensor_values[2];
   int sensor_t_l = sensor_values[1];
   int sensor_t_r = sensor_values[4];

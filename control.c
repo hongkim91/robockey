@@ -1,17 +1,14 @@
+#include "constants.h"
+#include "features.h"
 #include "localization.h"
 #include "debug.h"
 #include "motor.h"
 #include "adc.h"
 #include "timer.h"
 #include "control.h"
-
-#define Kp 40
-#define Kd 70
-#define Ki 0
+#include "puck.h"
 
 #define PI 3.145
-
-#define GOAL_SPEED_LIMIT 190.0
 
 POINT *goal = NULL;
 POINT *robot_goal[2];
@@ -19,17 +16,18 @@ float prev_theta_diff = 0;
 int goal_direction = 0;
 
 void drive_to_goal(POINT *robot) {
+  if (!FIND_GOAL) return;
+
   robot_goal[0] = robot;
   robot_goal[1] = goal;
   goal->theta = determine_angle(robot_goal);
 
-  /* theta_diff = robot->theta - goal->theta; */
   float theta_diff = translate_theta(robot->theta, goal->theta);
   if (prev_theta_diff == 0) {
     prev_theta_diff = theta_diff;
   }
 
-  int turn = Kp * theta_diff + Kd *(theta_diff - prev_theta_diff);
+  int turn = GOAL_KP * theta_diff + GOAL_KD *(theta_diff - prev_theta_diff);
   prev_theta_diff = theta_diff;
   int speed_val = goal_speed(theta_diff);
   if (speed_val > GOAL_SPEED_LIMIT - abs(turn)) {
@@ -55,8 +53,6 @@ void drive_to_goal(POINT *robot) {
 
 int goal_speed(float theta) {
   float theta_cutoff = 45.0 * PI/180;
-  /* send_float("theta", theta); */
-  /* send_float("theta_cutoff", theta_cutoff); */
 
   if (0 < theta && theta <= theta_cutoff) {
     return GOAL_SPEED_LIMIT - (GOAL_SPEED_LIMIT/fabs(theta_cutoff)) * theta;
@@ -69,12 +65,6 @@ int goal_speed(float theta) {
 
 int determine_goal(POINT *robot) {
   if (goal == NULL) {
-    /* goal = create_point(850, 420); */
-    /* goal_direction = RIGHT; */
-
-    /* goal = create_point(120, 400); */
-    /* goal_direction = LEFT; */
-
     if (robot->x < 500) {
       /* m_green(ON); */
       goal = create_point(860, 420);
@@ -177,6 +167,3 @@ void light_up_with_puck() {
     bi_color_red(OFF);
   }
 }
-
-
-

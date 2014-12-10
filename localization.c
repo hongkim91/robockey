@@ -2,14 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "constants.h"
+#include "features.h"
 #include "localization.h"
 #include "debug.h"
-#include "features.h"
 
 #define RINK_PIXEL_WIDTH 1024   // 512
 #define RINK_PIXEL_HEIGHT 768   // 384
-#define CENTER_X 512
-#define CENTER_Y 450
 
 int initialized = 0;
 POINT *axial_points[2];
