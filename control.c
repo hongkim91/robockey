@@ -170,6 +170,10 @@ void light_up_with_puck() {
 }
 
 bool headed_own_goal(POINT *robot) {
+  if (robot == NULL) {
+    return FALSE;
+  }
+
   if (goal_direction == LEFT) {
     return robot->x > MID_X && robot->theta > 0;
   } else if (goal_direction == RIGHT) {

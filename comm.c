@@ -26,7 +26,9 @@ void comm_init(int rx_addr) {
 
 void comm_handler() {
   m_rf_read(buffer,PACKET_LENGTH);
-  send_hex("buffer[0]", buffer[0]);
+  if (REQUIRE_COMM) {
+    send_hex("buffer[0]", buffer[0]);
+  }
   int direction = get_goal_direction();
 
   if (buffer[0] == ((char) 0xA0)) {

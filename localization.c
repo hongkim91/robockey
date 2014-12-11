@@ -85,9 +85,6 @@ POINT *determine_position(unsigned int *data) {
   theta = determine_angle(axial_points);
 
   if (TEST_LOCALIZATION_CENTER) {
-    while(!m_usb_rx_available()); //wait for an indication from the computer
-    m_usb_rx_char();  	          //grab the computer packet
-    m_usb_rx_flush();  		  //clear buffer
     POINT *p1 = axial_points[0];
     POINT *p2 = axial_points[0];
     send_point((p1->x+p2->x)/2, (p1->y+p1->y)/2);

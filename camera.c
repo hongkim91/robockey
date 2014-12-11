@@ -41,7 +41,7 @@ POINT *localize_robot() {
   attempt_localization();
 
   if (curr_robot != NULL) {
-    if (!TEST_LOCALIZATION_CENTER) {
+    if (LOCALIZATION && !TEST_LOCALIZATION_CENTER) {
       sprintf(buf, "x: %d, y: %d\n", curr_robot->x, curr_robot->y);
       send_buf(buf);
     }
@@ -53,7 +53,9 @@ POINT *localize_robot() {
       }
     }
   } else {
-    m_usb_tx_string("No point for curr_robot has been set yet!\n");
+    if (LOCALIZATION && !TEST_LOCALIZATION_CENTER) {
+      m_usb_tx_string("No point for curr_robot has been set yet!\n");
+    }
   }
   return curr_robot;
 }
