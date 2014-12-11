@@ -1,6 +1,9 @@
 #ifndef control__
 #define control__
 
+#include "localization.h"
+#include "m_general.h"
+
 #define NOTSET 0
 #define RIGHT 1
 #define LEFT 2

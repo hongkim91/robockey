@@ -11,6 +11,7 @@
 #include "features.h"
 #include "puck.h"
 #include "constants.h"
+#include "goalie.h"
 
 volatile int camera_timer_flag = 0;
 volatile int new_packet_flag = 0;
@@ -21,7 +22,8 @@ void m2_init();
 void init_robot_and_features() {
   // ROBOT_NAME DETERMINES ALL ROBOT SPECIFIC CONSTANTS.
   /* ROBOT_NAME = UGLY; */
-  ROBOT_NAME = HOPE;
+  /* ROBOT_NAME = HOPE; */
+  ROBOT_NAME = GENERAL;
   init_constants(ROBOT_NAME);
 
   // FLAGS DECIDE ALL BEHAVIOR.
@@ -30,6 +32,8 @@ void init_robot_and_features() {
   FIND_GOAL = 0;
   STOP_OWN_GOAL = 0;
   REQUIRE_COMM = 0;
+
+  TRACK_PUCK = 1; //ONLY FOR GOALIE.
 
   TEST_SENSORS = 0;
   TEST_GO_FORWARD = 0;
@@ -67,6 +71,12 @@ int main(void) {
     }
 
     update_ADC();
+
+    if (TRACK_PUCK) {
+      track_puck();
+      continue;
+    }
+
     if (!have_puck()) {
       find_puck(robot);
     }

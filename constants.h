@@ -4,6 +4,7 @@
 // robot names.
 #define UGLY 1
 #define HOPE 2
+#define GENERAL 3
 
 int ROBOT_NAME;
 int RXADDRESS;

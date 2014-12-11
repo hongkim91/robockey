@@ -8,7 +8,7 @@
 #include "control.h"
 #include "puck.h"
 
-bool first_run = FALSE;
+bool first_run = TRUE;
 int prev_theta_est = 0;
 int theta_est_cutoff = 0;
 
@@ -28,10 +28,10 @@ void find_puck(POINT *robot) {
   if (!FIND_PUCK) return;
 
   int theta_est = estimate_puck_theta();
-  if (!first_run) {
+  if (first_run) {
     prev_theta_est = theta_est;
     theta_est_cutoff = 1000;
-    first_run = TRUE;
+    first_run = FALSE;
   }
 
   /* int turn = PUCK_KP * theta_est + PUCK_KD *(theta_est - prev_theta_est); */
