@@ -33,6 +33,7 @@ void init_robot_and_features() {
   FIND_GOAL = 0;
   STOP_OWN_GOAL = 0;
   REQUIRE_COMM = 0;
+  FOLLOW_WALL = 0;
 
   TRACK_PUCK = 0; //ONLY FOR GOALIE.
 
@@ -85,6 +86,10 @@ int main(void) {
     if (STOP_OWN_GOAL && headed_own_goal(robot)) {
       stop();
     } else {
+      if (FOLLOW_WALL && near_wall(robot) && have_puck()) {
+        find_puck(robot);
+        continue;
+      }
       if (!FIND_PUCK || have_puck()) {
         drive_to_goal(robot);
       }
