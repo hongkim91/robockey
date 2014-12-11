@@ -9,7 +9,7 @@
 #include "puck.h"
 
 #define PI 3.145
-#define MID_X 500
+#define MID_X 475
 
 POINT *goal = NULL;
 POINT *robot_goal[2];

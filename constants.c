@@ -21,8 +21,8 @@ void init_constants(int robot_name) {
     PUCK_SPEED_LIMIT = 255;
     PUCK_KP = .1;
     PUCK_KD = 1;
-    CENTER_X = 512;
-    CENTER_Y = 450;
+    CENTER_X = 523;
+    CENTER_Y = 427;
     TOP_WALL_Y_CUTOFF = 570;
     BOTTOM_WALL_Y_CUTOFF = 305;
   }
