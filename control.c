@@ -53,7 +53,7 @@ void drive_to_goal(POINT *robot) {
 }
 
 int goal_speed(float theta) {
-  float theta_cutoff = 120.0 * PI/180;
+  float theta_cutoff = 140.0 * PI/180;
 
   if (0 < theta && theta <= theta_cutoff) {
     return GOAL_SPEED_LIMIT - (GOAL_SPEED_LIMIT/fabs(theta_cutoff)) * theta;
@@ -68,7 +68,7 @@ int determine_goal(POINT *robot) {
   if (goal == NULL) {
     if (robot->x < MID_X) {
       /* m_green(ON); */
-      goal = create_point(910, 405);
+      goal = create_point(910, 407);
       goal_direction = RIGHT;
       m_usb_tx_string("goal direction: RIGHT\n");
     } else {

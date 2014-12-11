@@ -28,11 +28,12 @@ void init_robot_and_features() {
   init_constants(ROBOT_NAME);
 
   // FLAGS DECIDE ALL BEHAVIOR.
-  LOCALIZATION = 0;
-  FIND_PUCK = 0;
-  FIND_GOAL = 0;
-  STOP_OWN_GOAL = 0;
-  REQUIRE_COMM = 0;
+  LOCALIZATION = 1;
+  FIND_PUCK = 1;
+  FIND_GOAL = 1;
+  STOP_OWN_GOAL = 1;
+  REQUIRE_COMM = 1;
+  FOLLOW_WALL = 0;
 
   TRACK_PUCK = 0; //ONLY FOR GOALIE.
 
@@ -41,7 +42,7 @@ void init_robot_and_features() {
   TEST_GO_BACKWARD = 0;
   TEST_LOCALIZATION_CENTER = 0;
   TEST_STAR_READING = 0;
-  TEST_HAVE_PUCK = 0;
+  TEST_HAVE_PUCK = 1;
   TEST_PUCK_SENSOR = 0;
   TEST_WALL_TROUBLE = 0;
 }
@@ -85,6 +86,10 @@ int main(void) {
     if (STOP_OWN_GOAL && headed_own_goal(robot)) {
       stop();
     } else {
+      if (FOLLOW_WALL && near_wall(robot) && have_puck()) {
+        find_puck(robot);
+        continue;
+      }
       if (!FIND_PUCK || have_puck()) {
         drive_to_goal(robot);
       }
