@@ -5,8 +5,8 @@ void init_constants(int robot_name) {
     RXADDRESS = 84;
     GOAL_KP = 40;
     GOAL_KD = 70;
-    GOAL_SPEED_LIMIT = 190;
-    PUCK_SPEED_LIMIT = 190;
+    GOAL_SPEED_LIMIT = 255;
+    PUCK_SPEED_LIMIT = 255;
     PUCK_KP = .1;
     PUCK_KD = 1;
     CENTER_X = 512;
@@ -17,8 +17,8 @@ void init_constants(int robot_name) {
     RXADDRESS = 85;
     GOAL_KP = 40;
     GOAL_KD = 70;
-    GOAL_SPEED_LIMIT = 190;
-    PUCK_SPEED_LIMIT = 190;
+    GOAL_SPEED_LIMIT = 255;
+    PUCK_SPEED_LIMIT = 255;
     PUCK_KP = .1;
     PUCK_KD = 1;
     CENTER_X = 512;

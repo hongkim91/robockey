@@ -53,7 +53,7 @@ void drive_to_goal(POINT *robot) {
 }
 
 int goal_speed(float theta) {
-  float theta_cutoff = 45.0 * PI/180;
+  float theta_cutoff = 80.0 * PI/180;
 
   if (0 < theta && theta <= theta_cutoff) {
     return GOAL_SPEED_LIMIT - (GOAL_SPEED_LIMIT/fabs(theta_cutoff)) * theta;

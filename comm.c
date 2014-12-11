@@ -54,9 +54,11 @@ void comm_handler() {
       bi_color_blue(ON);
     }
     play = TRUE;
+    send_float("play", is_play());
   } else if (buffer[0] == ((char) 0xA4)) {
     m_usb_tx_string("Pause.\n");
     play = FALSE;
+    send_float("play", is_play());
   } else if (buffer[0] == ((char) 0xA6)) {
     m_usb_tx_string("Halftime.\n");
     play = FALSE;

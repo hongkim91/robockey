@@ -25,11 +25,11 @@ void init_robot_and_features() {
   init_constants(ROBOT_NAME);
 
   // FLAGS DECIDE ALL BEHAVIOR.
-  LOCALIZATION = 0;
-  FIND_PUCK = 0;
-  FIND_GOAL = 0;
+  LOCALIZATION = 1;
+  FIND_PUCK = 1;
+  FIND_GOAL = 1;
+  STOP_OWN_GOAL = 1;
   REQUIRE_COMM = 0;
-  STOP_OWN_GOAL = 0;
 
   TEST_SENSORS = 0;
   TEST_GO_FORWARD = 0;
@@ -74,7 +74,9 @@ int main(void) {
     if (STOP_OWN_GOAL && headed_own_goal(robot)) {
       stop();
     } else {
-      drive_to_goal(robot);
+      if (!FIND_PUCK || have_puck()) {
+        drive_to_goal(robot);
+      }
     }
   }
   return 0;
