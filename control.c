@@ -73,7 +73,7 @@ int determine_goal(POINT *robot) {
       m_usb_tx_string("goal direction: RIGHT\n");
     } else {
       /* m_red(ON); */
-      goal = create_point(30, 430);
+      goal = create_point(30, 420);
       goal_direction = LEFT;
       m_usb_tx_string("goal direction: LEFT\n");
     }

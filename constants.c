@@ -13,6 +13,10 @@ void init_constants(int robot_name) {
     CENTER_Y = 450;
     TOP_WALL_Y_CUTOFF = 570;
     BOTTOM_WALL_Y_CUTOFF = 305;
+    WT_KP_H = 8;
+    WT_KP_L = 4;
+    WT_KD_H = 3;
+    WT_KD_L = 3;
   } else if (robot_name == HOPE) {
     RXADDRESS = 85;
     GOAL_KP = 40;
@@ -25,6 +29,10 @@ void init_constants(int robot_name) {
     CENTER_Y = 427;
     TOP_WALL_Y_CUTOFF = 570;
     BOTTOM_WALL_Y_CUTOFF = 305;
+    WT_KP_H = 9;
+    WT_KP_L = 5;
+    WT_KD_H = 3;
+    WT_KD_L = 3;
   } else if (robot_name == GENERAL) {
     RXADDRESS = 86;
     GOAL_KP = 40;
@@ -38,5 +46,9 @@ void init_constants(int robot_name) {
     CENTER_Y = 427;
     TOP_WALL_Y_CUTOFF = 570;
     BOTTOM_WALL_Y_CUTOFF = 305;
+    WT_KP_H = 9;
+    WT_KP_L = 5;
+    WT_KD_H = 3;
+    WT_KD_L = 3;
   }
 }

@@ -78,20 +78,20 @@ int puck_turn(int theta_est, POINT *robot) {
     switch (determine_quadrant()) {
     case T_R:
       if (sensor_t_l < sensor_b_r) {
-        KP = 9 * PUCK_KP;
-        KD = 3 * PUCK_KD;
+        KP = WT_KP_H * PUCK_KP;
+        KD = WT_KD_H * PUCK_KD;
       } else {
-        KP = 5 * PUCK_KP;
-        KD = 3 * PUCK_KD;
+        KP = WT_KP_L * PUCK_KP;
+        KD = WT_KD_L * PUCK_KD;
       }
       break;
     case T_L:
       if (sensor_t_r < sensor_b_l) {
-        KP = 9 * PUCK_KP;
-        KD = 3 * PUCK_KD;
+        KP = WT_KP_H * PUCK_KP;
+        KD = WT_KD_H * PUCK_KD;
       } else {
-        KP = 5 * PUCK_KP;
-        KD = 3 * PUCK_KD;
+        KP = WT_KP_L * PUCK_KP;
+        KD = WT_KD_L * PUCK_KD;
       }
       break;
     }

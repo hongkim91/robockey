@@ -12,6 +12,34 @@ NEED TO IMPROVE
 
 COMMTEST should work without needing localization.
 
+U:L
+480
+<- 450
+420
+<- 385
+350
+
+U:R
+485
+<- 447
+410
+<- 370
+330
+
+D:L
+498
+<-460
+420
+<-390
+360
+
+D:R
+482
+<- 445
+407
+<- 372
+337
+
 U: (135, 337)
 D: (134, 340)
 
