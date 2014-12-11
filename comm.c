@@ -1,5 +1,7 @@
 #include <avr/io.h>
 #include <stdio.h>
+#include "features.h"
+#include "constants.h"
 #include "m_general.h"
 #include "m_bus.h"
 #include "m_rf.h"
@@ -7,7 +9,6 @@
 #include "string.h"
 #include "control.h"
 #include "comm.h"
-#include "features.h"
 
 #define CHANNEL 1
 #define PACKET_LENGTH 10
@@ -17,11 +18,15 @@ char buffer[PACKET_LENGTH] = {0,0,0,0,0,0,0,0,0,0};
 char buf[100];
 bool play = FALSE;
 
-void comm_init(int rx_addr) {
+void comm_init() {
   m_bus_init();
-  if (!m_rf_open(CHANNEL, rx_addr, PACKET_LENGTH)) {
-    /* m_red(ON); */
+  if (!m_rf_open(CHANNEL, RXADDRESS, PACKET_LENGTH)) {
+    m_red(ON);
   }
+}
+
+void comm_reopen() {
+  m_rf_open(CHANNEL, RXADDRESS, PACKET_LENGTH);
 }
 
 void comm_handler() {

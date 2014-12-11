@@ -16,24 +16,25 @@
 volatile int camera_timer_flag = 0;
 volatile int new_packet_flag = 0;
 POINT *robot = NULL;
+volatile int mrf_count = 0;
 
 void m2_init();
 
 void init_robot_and_features() {
   // ROBOT_NAME DETERMINES ALL ROBOT SPECIFIC CONSTANTS.
   /* ROBOT_NAME = UGLY; */
-  /* ROBOT_NAME = HOPE; */
-  ROBOT_NAME = GENERAL;
+  ROBOT_NAME = HOPE;
+  /* ROBOT_NAME = GENERAL; */
   init_constants(ROBOT_NAME);
 
   // FLAGS DECIDE ALL BEHAVIOR.
-  LOCALIZATION = 0;
-  FIND_PUCK = 0;
-  FIND_GOAL = 0;
-  STOP_OWN_GOAL = 0;
-  REQUIRE_COMM = 0;
+  LOCALIZATION = 1;
+  FIND_PUCK = 1;
+  FIND_GOAL = 1;
+  STOP_OWN_GOAL = 1;
+  REQUIRE_COMM = 1;
 
-  TRACK_PUCK = 1; //ONLY FOR GOALIE.
+  TRACK_PUCK = 0; //ONLY FOR GOALIE.
 
   TEST_SENSORS = 0;
   TEST_GO_FORWARD = 0;
@@ -129,7 +130,7 @@ void m2_init() {
   camera_init();
 
   // rf communicaiton init.
-  comm_init(RXADDRESS);
+  comm_init();
 
   if (TEST_GO_FORWARD) {
     set_motor_duty_cycle(200, 200);
@@ -141,6 +142,10 @@ void m2_init() {
 // camera interrupt.
 ISR(TIMER3_COMPA_vect) {
   camera_timer_flag = 1;
+  mrf_count++;
+  if (mrf_count % 20 == 0) {
+    comm_reopen();
+  }
 }
 
 //rf data interrupt.

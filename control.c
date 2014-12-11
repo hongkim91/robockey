@@ -68,12 +68,12 @@ int determine_goal(POINT *robot) {
   if (goal == NULL) {
     if (robot->x < MID_X) {
       /* m_green(ON); */
-      goal = create_point(860, 420);
+      goal = create_point(910, 405);
       goal_direction = RIGHT;
       m_usb_tx_string("goal direction: RIGHT\n");
     } else {
       /* m_red(ON); */
-      goal = create_point(100, 450);
+      goal = create_point(30, 430);
       goal_direction = LEFT;
       m_usb_tx_string("goal direction: LEFT\n");
     }
