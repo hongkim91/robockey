@@ -22,13 +22,13 @@ void m2_init();
 
 void init_robot_and_features() {
   // ROBOT_NAME DETERMINES ALL ROBOT SPECIFIC CONSTANTS.
-  /* ROBOT_NAME = UGLY; */
-  ROBOT_NAME = HOPE;
+  ROBOT_NAME = UGLY;
+  /* ROBOT_NAME = HOPE; */
   /* ROBOT_NAME = GENERAL; */
   init_constants(ROBOT_NAME);
 
   // FLAGS DECIDE ALL BEHAVIOR.
-  LOCALIZATION = 0;
+  LOCALIZATION = 1;
   FIND_PUCK = 0;
   FIND_GOAL = 0;
   STOP_OWN_GOAL = 0;
@@ -40,7 +40,7 @@ void init_robot_and_features() {
   TEST_GO_FORWARD = 0;
   TEST_GO_BACKWARD = 0;
   TEST_LOCALIZATION_CENTER = 0;
-  TEST_STAR_READING = 0;
+  TEST_STAR_READING = 1;
   TEST_HAVE_PUCK = 0;
   TEST_PUCK_SENSOR = 0;
   TEST_WALL_TROUBLE = 0;
