@@ -38,6 +38,9 @@ void find_puck(POINT *robot) {
   int turn = puck_turn(theta_est, robot);
   prev_theta_est = theta_est;
   int speed_val = puck_speed(theta_est);
+  if (speed_val < 0) {
+    speed_val = 0;
+  }
   if (speed_val > PUCK_SPEED_LIMIT - abs(turn)) {
     speed_val = PUCK_SPEED_LIMIT - abs(turn);
   }
