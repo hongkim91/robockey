@@ -8,11 +8,11 @@ void init_constants(int robot_name) {
     GOAL_SPEED_LIMIT = 255;
     PUCK_SPEED_LIMIT = 255;
     PUCK_KP = .1;
-    PUCK_KD = 1;
-    CENTER_X = 512;
-    CENTER_Y = 450;
+    PUCK_KD = 3;
+    CENTER_X = 527;
+    CENTER_Y = 394;
     TOP_WALL_Y_CUTOFF = 570;
-    BOTTOM_WALL_Y_CUTOFF = 305;
+    BOTTOM_WALL_Y_CUTOFF = 300;
     WT_KP_H = 8;
     WT_KP_L = 4;
     WT_KD_H = 3;
@@ -25,10 +25,10 @@ void init_constants(int robot_name) {
     PUCK_SPEED_LIMIT = 255;
     PUCK_KP = .1;
     PUCK_KD = 1;
-    CENTER_X = 523;
-    CENTER_Y = 423;
+    CENTER_X = 520;
+    CENTER_Y = 444;
     TOP_WALL_Y_CUTOFF = 570;
-    BOTTOM_WALL_Y_CUTOFF = 305;
+    BOTTOM_WALL_Y_CUTOFF = 300;
     WT_KP_H = 9;
     WT_KP_L = 5;
     WT_KD_H = 3;
@@ -36,7 +36,7 @@ void init_constants(int robot_name) {
   } else if (robot_name == GENERAL) {
     RXADDRESS = 86;
     GOAL_KP = 120;
-    GOAL_KD = 70;
+    GOAL_KD = 0;
     GOAL_SPEED_LIMIT = 255;
     PUCK_SPEED_LIMIT = 255;
     PUCK_KP = .2;
@@ -45,7 +45,7 @@ void init_constants(int robot_name) {
     CENTER_X = 523;
     CENTER_Y = 428;
     TOP_WALL_Y_CUTOFF = 570;
-    BOTTOM_WALL_Y_CUTOFF = 305;
+    BOTTOM_WALL_Y_CUTOFF = 300;
     WT_KP_H = 9;
     WT_KP_L = 5;
     WT_KD_H = 3;

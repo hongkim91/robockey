@@ -68,12 +68,12 @@ int determine_goal(POINT *robot) {
   if (goal == NULL) {
     if (robot->x < MID_X) {
       /* m_green(ON); */
-      goal = create_point(910, 405);
+      goal = create_point(910, 440);
       goal_direction = RIGHT;
       m_usb_tx_string("goal direction: RIGHT\n");
     } else {
       /* m_red(ON); */
-      goal = create_point(30, 420);
+      goal = create_point(30, 440);
       goal_direction = LEFT;
       m_usb_tx_string("goal direction: LEFT\n");
     }
@@ -85,6 +85,9 @@ int determine_goal(POINT *robot) {
     return 0;
   }
 }
+
+/* void move_goal_y(POINT *robot) { */
+
 
 int determine_quadrant() {
   int sensor_b_l = sensor_values[2];
